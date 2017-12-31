@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <!--Import Material Icons-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!--Import materialize.scss-->
+  <link type="text/css" rel="stylesheet" href="/lib/materialize/sass/materialize.scss" media="screen,projection" />
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel='stylesheet' href='/style/style.css' />
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js" defer></script>
+  <script type="text/javascript" src="/lib/materialize/js/bin/materialize.min.js" defer></script>
+
+  <script type="text/javascript" src="/lib/d3/d3.min.js" defer></script>
+
+  <script type="text/javascript" src="/lib/tabletop/src/tabletop.min.js" defer></script>
+</head>
+
+<body>
+  <h1>
+    <%= title %>
+  </h1>
+  <p>Welcome to
+    <%= title %>
+  </p>
+
+  <script type="text/javascript" src="/js/data-gatherer.js"></script>
+  <script type="text/javascript" src="/js/migration-music.js"></script>
+
+  <script>
+    var refugees;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      init(() => start(refugees));
+    });
+  </script>
+</body>
+
+</html>
