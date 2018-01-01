@@ -1,78 +1,127 @@
+var svgWidth = 1000;
+var svgHeight = 500;
+var svgMinimapHeight = 70;
+
+var margin;
+var marginMinimap;
+var width;
+var height;
+var heightMinimap;
+
+var x;
+var y;
+
+var xMinimap;
+var yMinimap;
+
+var xAxis;
+var xAxisMinimap;
+var yAxis;
+var yAxisPadding = 500;
+
+var svg;
+var focus;
+var minimap;
+
+var brush;
+var zoom;
+
+var menValueLine;
+var womenValueLine;
+var childrenValueLine;
+var elderlyValueLine;
+
+var menValueLineMinimap;
+var womenValueLineMinimap;
+var childrenValueLineMinimap;
+var elderlyValueLineMinimap;
+
 function start(data) {
 
-    // set the dimensions and margins of the graph
-    var margin = {
-            top: 20,
-            right: 20,
-            bottom: 30,
-            left: 50
-        },
-        marginMinimap = {
-            top: 430,
-            right: 20,
-            bottom: 30,
-            left: 40
-        },
-        width = 2000 - margin.left - margin.right,
-        height = 1300 - margin.top - margin.bottom,
-        heightMinimap = 1300 - marginMinimap.top - marginMinimap.bottom;
+    // Set the dimensions and margins of the graph
+    margin = {
+        top: 20,
+        right: 20,
+        bottom: svgMinimapHeight + 40,
+        left: 40
+    };
+    marginMinimap = {
+        top: svgHeight - svgMinimapHeight,
+        right: 20,
+        bottom: 30,
+        left: 40
+    };
+    width = svgWidth - margin.left - margin.right;
+    height = svgHeight - margin.top - margin.bottom;
+    heightMinimap = svgHeight - marginMinimap.top - marginMinimap.bottom;
 
-    // parse the date / time
+    // Parse the date / time
     var parseTime = d3.timeParse("%Y-%m");
 
-    // set the ranges
-    var x = d3.scaleTime().range([0, width]);
-    var y = d3.scaleLinear().range([height, 0]);
+    // Set the ranges
+    x = d3.scaleTime().range([0, width]);
+    y = d3.scaleLinear().range([height, 0]);
 
-    // define the 1st line
-    var menValueLine = d3.line()
-        .x(function (d) {
-            return x(d.period);
-        })
-        .y(function (d) {
-            return y(d.men);
-        })
-        .curve(d3.curveCardinal);
+    xMinimap = d3.scaleTime().range([0, width]);
+    yMinimap = d3.scaleLinear().range([heightMinimap, 0]);
 
-    // define the 2nd line
-    var womenValueLine = d3.line()
-        .x(function (d) {
-            return x(d.period);
-        })
-        .y(function (d) {
-            return y(d.women);
-        })
-        .curve(d3.curveCardinal);
+    xAxis = d3.axisBottom(x);
+    xAxisMinimap = d3.axisBottom(xMinimap);
+    yAxis = d3.axisLeft(y);
 
-    var childrenValueLine = d3.line()
-        .x(function (d) {
-            return x(d.period);
-        })
-        .y(function (d) {
-            return y(d.children);
-        })
-        .curve(d3.curveCardinal);
+    brush = d3.brushX()
+        .extent([
+            [0, 0],
+            [width, heightMinimap]
+        ])
+        .on("brush end", brushed);
 
-    var elderlyValueLine = d3.line()
-        .x(function (d) {
-            return x(d.period);
-        })
-        .y(function (d) {
-            return y(d.elderly);
-        })
-        .curve(d3.curveCardinal);
+    zoom = d3.zoom()
+        .scaleExtent([1, Infinity])
+        .translateExtent([
+            [0, 0],
+            [width, height]
+        ])
+        .extent([
+            [0, 0],
+            [width, height]
+        ])
+        .on("zoom", zoomed);
 
-    // append the svg obgect to the body of the page
-    // appends a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
-    var svg = d3.select("body").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+    // Define value lines
+    menValueLine = new MenValueLine(x, y);
+    womenValueLine = new WomenValueLine(x, y);
+    childrenValueLine = new ChildrenValueLine(x, y);
+    elderlyValueLine = new ElderlyValueLine(x, y);
 
-    // format the data
+    menValueLineMinimap = new MenValueLine(xMinimap, yMinimap);
+    womenValueLineMinimap = new WomenValueLine(xMinimap, yMinimap);
+    childrenValueLineMinimap = new ChildrenValueLine(xMinimap, yMinimap);
+    elderlyValueLineMinimap = new ElderlyValueLine(xMinimap, yMinimap);
+
+    // Append the svg obgect to the body of the page
+    // Appends a 'group' element to 'svg'
+    // Moves the 'group' element to the top left margin
+    svg = d3.select("body").append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
+
+    svg.append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("id", "clip-rect")
+        .attr("width", width)
+        .attr("height", height);
+
+    focus = svg.append("g")
+        .attr("class", "focus")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    minimap = svg.append("g")
+        .attr("class", "minimap")
+        .attr("transform", "translate(" + marginMinimap.left + "," + marginMinimap.top + ")");
+
+    // Format the data
     data.forEach(function (d) {
         d.period = parseTime(d.period);
     });
@@ -82,39 +131,125 @@ function start(data) {
         return d.period;
     }));
     y.domain([0, d3.max(data, function (d) {
-        return Math.max(d.men);
+        return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding;
     })]);
 
-    // Add the menValueLine path.
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", menValueLine(data));
-
-    // Add the womenValueLine path.
-    svg.append("path")
-        .attr("class", "line")
-        .style("stroke", "red")
-        .attr("d", womenValueLine(data));
-
-    // Add the childrenValueLine path.
-    svg.append("path")
-        .attr("class", "line")
-        .style("stroke", "yellow")
-        .attr("d", childrenValueLine(data));
-
-    // Add the elderlyValueLine path.
-    svg.append("path")
-        .attr("class", "line")
-        .style("stroke", "green")
-        .attr("d", elderlyValueLine(data));
+    xMinimap.domain(x.domain());
+    yMinimap.domain(y.domain());
 
     // Add the X Axis
-    svg.append("g")
+    focus.append("g")
+        .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .call(xAxis);
 
     // Add the Y Axis
-    svg.append("g")
-        .call(d3.axisLeft(y));
+    focus.append("g")
+        .attr("class", "axis axis--y")
+        .call(yAxis);
 
+    focus.append("g")
+        .attr("class", "chart-body")
+        .attr("clip-path", "url(#clip)");
+
+    // Add the menValueLine path.
+    focus.select("g.chart-body")
+        .append("path")
+        .datum(data)
+        .attr("id", "men")
+        .attr("class", "line")
+        .attr("d", menValueLine);
+
+    // Add the womenValueLine path.
+    focus.select("g.chart-body")
+        .append("path")
+        .datum(data)
+        .attr("id", "women")
+        .attr("class", "line")
+        .attr("d", womenValueLine);
+
+    // Add the childrenValueLine path.
+    focus.select("g.chart-body")
+        .append("path")
+        .datum(data)
+        .attr("id", "children")
+        .attr("class", "line")
+        .attr("d", childrenValueLine);
+
+    // Add the elderlyValueLine path.
+    focus.select("g.chart-body")
+        .append("path")
+        .datum(data)
+        .attr("id", "elderly")
+        .attr("class", "line")
+        .attr("d", elderlyValueLine);
+
+    minimap.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + heightMinimap + ")")
+        .call(xAxisMinimap);
+
+    minimap.append("path")
+        .datum(data)
+        .attr("id", "men")
+        .attr("class", "line")
+        .attr("d", menValueLineMinimap);
+
+    minimap.append("path")
+        .datum(data)
+        .attr("id", "women")
+        .attr("class", "line")
+        .attr("d", womenValueLineMinimap);
+
+    minimap.append("path")
+        .datum(data)
+        .attr("id", "children")
+        .attr("class", "line")
+        .attr("d", childrenValueLineMinimap);
+
+    minimap.append("path")
+        .datum(data)
+        .attr("id", "elderly")
+        .attr("class", "line")
+        .attr("d", elderlyValueLineMinimap);
+
+    minimap.append("g")
+        .attr("class", "brush")
+        .call(brush)
+        .call(brush.move, x.range());
+
+    svg.append("rect")
+        .attr("class", "zoom")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .call(zoom);
+}
+
+function brushed() {
+    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+    var s = d3.event.selection || xMinimap.range();
+    x.domain(s.map(xMinimap.invert, xMinimap));
+
+    focus.select("#men").attr("d", menValueLine);
+    focus.select("#women").attr("d", womenValueLine);
+    focus.select("#children").attr("d", childrenValueLine);
+    focus.select("#elderly").attr("d", elderlyValueLine);
+    focus.select(".axis--x").call(xAxis);
+    svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+        .scale(width / (s[1] - s[0]))
+        .translate(-s[0], 0));
+}
+
+function zoomed() {
+    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
+    var t = d3.event.transform;
+    x.domain(t.rescaleX(xMinimap).domain());
+
+    focus.select("#men").attr("d", menValueLine);
+    focus.select("#women").attr("d", womenValueLine);
+    focus.select("#children").attr("d", childrenValueLine);
+    focus.select("#elderly").attr("d", elderlyValueLine);
+    focus.select(".axis--x").call(xAxis);
+    minimap.select(".brush").call(brush.move, x.range().map(t.invertX, t));
 }
