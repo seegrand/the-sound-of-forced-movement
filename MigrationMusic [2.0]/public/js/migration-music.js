@@ -1,6 +1,11 @@
+var data;
+
 var svgWidth = 1000;
 var svgHeight = 500;
 var svgMinimapHeight = 70;
+
+var transformTransition;
+var transformTransitionDuration;
 
 var margin;
 var marginMinimap;
@@ -17,7 +22,7 @@ var yMinimap;
 var xAxis;
 var xAxisMinimap;
 var yAxis;
-var yAxisPadding = 500;
+var yAxisPaddingFactor = 0.10;
 
 var svg;
 var focus;
@@ -37,19 +42,22 @@ var childrenValueLineMinimap;
 var elderlyValueLineMinimap;
 
 function start(data) {
+    this.data = data;
+    this.transformTransition = d3.easeLinear;
+    this.transformTransitionDuration = 300;
 
     // Set the dimensions and margins of the graph
     margin = {
         top: 20,
-        right: 20,
+        right: 40,
         bottom: svgMinimapHeight + 40,
-        left: 40
+        left: 20
     };
     marginMinimap = {
         top: svgHeight - svgMinimapHeight,
-        right: 20,
+        right: 40,
         bottom: 30,
-        left: 40
+        left: 20
     };
     width = svgWidth - margin.left - margin.right;
     height = svgHeight - margin.top - margin.bottom;
@@ -67,7 +75,7 @@ function start(data) {
 
     xAxis = d3.axisBottom(x);
     xAxisMinimap = d3.axisBottom(xMinimap);
-    yAxis = d3.axisLeft(y);
+    yAxis = d3.axisRight(y);
 
     brush = d3.brushX()
         .extent([
@@ -110,7 +118,7 @@ function start(data) {
         .attr("id", "clip")
         .append("svg:rect")
         .attr("id", "clip-rect")
-        .attr("width", width)
+        .attr("width", width - 200)
         .attr("height", height);
 
     focus = svg.append("g")
@@ -131,7 +139,7 @@ function start(data) {
         return d.period;
     }));
     y.domain([0, d3.max(data, function (d) {
-        return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding;
+        return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
     })]);
 
     xMinimap.domain(x.domain());
@@ -146,6 +154,7 @@ function start(data) {
     // Add the Y Axis
     focus.append("g")
         .attr("class", "axis axis--y")
+        .attr("transform", "translate(" + width + ", 0)")
         .call(yAxis);
 
     focus.append("g")
@@ -228,14 +237,33 @@ function start(data) {
 
 function brushed() {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+
+    var transitionEaseLinear = d3.transition()
+        .duration(transformTransitionDuration)
+        .ease(transformTransition);
+
     var s = d3.event.selection || xMinimap.range();
     x.domain(s.map(xMinimap.invert, xMinimap));
 
-    focus.select("#men").attr("d", menValueLine);
-    focus.select("#women").attr("d", womenValueLine);
-    focus.select("#children").attr("d", childrenValueLine);
-    focus.select("#elderly").attr("d", elderlyValueLine);
-    focus.select(".axis--x").call(xAxis);
+    focus.select("#men").transition(transitionEaseLinear).attr("d", menValueLine);
+    focus.select("#women").transition(transitionEaseLinear).attr("d", womenValueLine);
+    focus.select("#children").transition(transitionEaseLinear).attr("d", childrenValueLine);
+    focus.select("#elderly").transition(transitionEaseLinear).attr("d", elderlyValueLine);
+
+    // Rescale x axis
+    focus.select(".axis--x").transition(transitionEaseLinear).call(xAxis);
+
+    // Rescale y axis
+    y.domain([0, d3.max(data, function (d) {
+        if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
+            return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+        }
+    })]);
+
+    focus.select(".axis--y")
+        .transition(transitionEaseLinear)
+        .call(yAxis);
+
     svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
         .scale(width / (s[1] - s[0]))
         .translate(-s[0], 0));
@@ -243,13 +271,37 @@ function brushed() {
 
 function zoomed() {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
+
     var t = d3.event.transform;
+
+    var transitionEaseLinear = d3.transition()
+        .duration(transformTransitionDuration)
+        .ease(transformTransition);
+
     x.domain(t.rescaleX(xMinimap).domain());
 
-    focus.select("#men").attr("d", menValueLine);
-    focus.select("#women").attr("d", womenValueLine);
-    focus.select("#children").attr("d", childrenValueLine);
-    focus.select("#elderly").attr("d", elderlyValueLine);
-    focus.select(".axis--x").call(xAxis);
+    focus.select("#men").transition(transitionEaseLinear).attr("d", menValueLine);
+    focus.select("#women").transition(transitionEaseLinear).attr("d", womenValueLine);
+    focus.select("#children").transition(transitionEaseLinear).attr("d", childrenValueLine);
+    focus.select("#elderly").transition(transitionEaseLinear).attr("d", elderlyValueLine);
+
+    // Rescale x axis
+    focus.select(".axis--x").transition(transitionEaseLinear).call(xAxis);
+
+    // Rescale y axis
+    y.domain([0, d3.max(data, function (d) {
+        if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
+            return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+        }
+    })]);
+
+    focus.select(".axis--y")
+        .transition(transitionEaseLinear)
+        .call(yAxis);
+
     minimap.select(".brush").call(brush.move, x.range().map(t.invertX, t));
+}
+
+function yAxisPadding(maxValue) {
+    return maxValue * yAxisPaddingFactor;
 }
