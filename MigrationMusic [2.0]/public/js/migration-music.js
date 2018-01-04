@@ -1,4 +1,7 @@
-var data;
+var data = [];
+var allData = [];
+
+var counter = 1;
 
 var svgWidth = 1000;
 var svgHeight = 500;
@@ -41,8 +44,19 @@ var womenValueLineMinimap;
 var childrenValueLineMinimap;
 var elderlyValueLineMinimap;
 
-function start(data) {
-    this.data = data;
+function setup(refugees) {
+    this.allData = refugees;
+
+    // Parse the date / time
+    var parseTime = d3.timeParse("%Y-%m");
+
+    // Format the data
+    this.allData.forEach(function (d) {
+        d.period = parseTime(d.period);
+    });
+
+    this.data[0] = this.allData[0];
+
     this.transformTransition = d3.easeLinear;
     this.transformTransitionDuration = 300;
 
@@ -62,9 +76,6 @@ function start(data) {
     width = svgWidth - margin.left - margin.right;
     height = svgHeight - margin.top - margin.bottom;
     heightMinimap = svgHeight - marginMinimap.top - marginMinimap.bottom;
-
-    // Parse the date / time
-    var parseTime = d3.timeParse("%Y-%m");
 
     // Set the ranges
     x = d3.scaleTime().range([0, width]);
@@ -118,7 +129,7 @@ function start(data) {
         .attr("id", "clip")
         .append("svg:rect")
         .attr("id", "clip-rect")
-        .attr("width", width - 200)
+        .attr("width", width)
         .attr("height", height);
 
     focus = svg.append("g")
@@ -128,11 +139,6 @@ function start(data) {
     minimap = svg.append("g")
         .attr("class", "minimap")
         .attr("transform", "translate(" + marginMinimap.left + "," + marginMinimap.top + ")");
-
-    // Format the data
-    data.forEach(function (d) {
-        d.period = parseTime(d.period);
-    });
 
     // Scale the range of the data
     x.domain(d3.extent(data, function (d) {
@@ -233,6 +239,112 @@ function start(data) {
         .attr("height", height)
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .call(zoom);
+
+    setInterval(function () {
+        addDataPoint();
+    }, 1000);
+
+    setInterval(() => {
+        if (counter < allData.length) {
+            update();
+        }
+    }, 1100);
+}
+
+function update() {
+    // Scale the range of the data
+    x.domain(d3.extent(data, function (d) {
+        return d.period;
+    }));
+    y.domain([0, d3.max(data, function (d) {
+        return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+    })]);
+
+    var transitionEaseLinear = d3.transition()
+        .duration(1000)
+        .ease(transformTransition);
+
+    focus.select("#men").attr("d", menValueLine).transition(transitionEaseLinear).attr("transform", "translate(" + (x(0) - x(1000)) + ")");
+    focus.select("#women").transition(transitionEaseLinear).attr("d", womenValueLine);
+    focus.select("#children").transition(transitionEaseLinear).attr("d", childrenValueLine);
+    focus.select("#elderly").transition(transitionEaseLinear).attr("d", elderlyValueLine);
+
+    // Rescale x axis
+    focus.select(".axis--x").transition(transitionEaseLinear).call(xAxis);
+
+    // Rescale y axis
+    y.domain([0, d3.max(data, function (d) {
+        if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
+            return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+        }
+    })]);
+
+    focus.select(".axis--y")
+        .transition(transitionEaseLinear)
+        .call(yAxis);
+
+    updateValueLines();
+}
+
+function updateValueLines() {
+    // Add the menValueLine path.
+    focus.select("path#men")
+        .datum(data)
+        .attr("d", menValueLine);
+
+    // Add the womenValueLine path.
+    focus.select("path#women")
+        .datum(data)
+        .attr("d", womenValueLine);
+
+    // Add the childrenValueLine path.
+    focus.select("path#children")
+        .datum(data)
+        .attr("d", childrenValueLine);
+
+    // Add the elderlyValueLine path.
+    focus.select("path#elderly")
+        .datum(data)
+        .attr("d", elderlyValueLine);
+
+    // minimap.append("g")
+    //     .attr("class", "axis axis--x")
+    //     .attr("transform", "translate(0," + heightMinimap + ")")
+    //     .call(xAxisMinimap);
+
+    // minimap.append("path")
+    //     .datum(data)
+    //     .attr("id", "men")
+    //     .attr("class", "line")
+    //     .attr("d", menValueLineMinimap);
+
+    // minimap.append("path")
+    //     .datum(data)
+    //     .attr("id", "women")
+    //     .attr("class", "line")
+    //     .attr("d", womenValueLineMinimap);
+
+    // minimap.append("path")
+    //     .datum(data)
+    //     .attr("id", "children")
+    //     .attr("class", "line")
+    //     .attr("d", childrenValueLineMinimap);
+
+    // minimap.append("path")
+    //     .datum(data)
+    //     .attr("id", "elderly")
+    //     .attr("class", "line")
+    //     .attr("d", elderlyValueLineMinimap);
+}
+
+function addDataPoint() {
+    this.data.push(this.allData[counter]);
+
+    counter++;
+
+    // while (data.length > 62) {
+    //     data.shift();
+    // }
 }
 
 function brushed() {
