@@ -8,4 +8,8 @@ router.get('/', function (req, res, next) {
   });
 });
 
+router.get('/circle', function (req, res, next) {
+  res.render('circle-on-line');
+});
+
 module.exports = router;

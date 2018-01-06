@@ -5,30 +5,60 @@ body {
 a {
   color: #00B7FF; }
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 2px; }
+.focus > .chart-body > .line {
+  stroke-dasharray: 8; }
 
 #men.line {
   fill: none;
-  stroke: red;
+  stroke: #ED7D31;
   stroke-width: 2px; }
 
 #women.line {
   fill: none;
-  stroke: yellow;
+  stroke: #68C554;
   stroke-width: 2px; }
 
 #children.line {
   fill: none;
-  stroke: lightblue;
+  stroke: #DD2754;
   stroke-width: 2px; }
 
 #elderly.line {
   fill: none;
-  stroke: green;
+  stroke: #FFC000;
   stroke-width: 2px; }
+
+#men.refugees {
+  fill: #ED7D31; }
+
+#men.depandants {
+  stroke: #ED7D31;
+  stroke-width: 2px;
+  fill: white; }
+
+#women.refugees {
+  fill: #68C554; }
+
+#women.depandants {
+  stroke: #68C554;
+  stroke-width: 2px;
+  fill: white; }
+
+#children.refugees {
+  fill: #DD2754; }
+
+#children.depandants {
+  stroke: #DD2754;
+  stroke-width: 2px;
+  fill: white; }
+
+#elderly.refugees {
+  fill: #FFC000; }
+
+#elderly.depandants {
+  stroke: #FFC000;
+  stroke-width: 2px;
+  fill: white; }
 
 .zoom {
   cursor: move;

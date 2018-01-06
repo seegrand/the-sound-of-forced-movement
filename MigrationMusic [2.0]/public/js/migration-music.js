@@ -1,10 +1,7 @@
-var data = [];
-var allData = [];
-
-var counter = 1;
+var data;
 
 var svgWidth = 1000;
-var svgHeight = 500;
+var svgHeight = 650;
 var svgMinimapHeight = 70;
 
 var transformTransition;
@@ -25,14 +22,21 @@ var yMinimap;
 var xAxis;
 var xAxisMinimap;
 var yAxis;
-var yAxisPaddingFactor = 0.10;
+var yAxisPaddingFactor = 0.40;
 
 var svg;
 var focus;
 var minimap;
 
 var brush;
+var brushX = 0;
+
 var zoom;
+
+var pathMen;
+var pathWomen;
+var pathChildren;
+var pathElderly;
 
 var menValueLine;
 var womenValueLine;
@@ -44,19 +48,8 @@ var womenValueLineMinimap;
 var childrenValueLineMinimap;
 var elderlyValueLineMinimap;
 
-function setup(refugees) {
-    this.allData = refugees;
-
-    // Parse the date / time
-    var parseTime = d3.timeParse("%Y-%m");
-
-    // Format the data
-    this.allData.forEach(function (d) {
-        d.period = parseTime(d.period);
-    });
-
-    this.data[0] = this.allData[0];
-
+function start(data) {
+    this.data = data;
     this.transformTransition = d3.easeLinear;
     this.transformTransitionDuration = 300;
 
@@ -76,6 +69,9 @@ function setup(refugees) {
     width = svgWidth - margin.left - margin.right;
     height = svgHeight - margin.top - margin.bottom;
     heightMinimap = svgHeight - marginMinimap.top - marginMinimap.bottom;
+
+    // Parse the date / time
+    var parseTime = d3.timeParse("%Y-%m");
 
     // Set the ranges
     x = d3.scaleTime().range([0, width]);
@@ -140,6 +136,11 @@ function setup(refugees) {
         .attr("class", "minimap")
         .attr("transform", "translate(" + marginMinimap.left + "," + marginMinimap.top + ")");
 
+    // Format the data
+    data.forEach(function (d) {
+        d.period = parseTime(d.period);
+    });
+
     // Scale the range of the data
     x.domain(d3.extent(data, function (d) {
         return d.period;
@@ -168,7 +169,7 @@ function setup(refugees) {
         .attr("clip-path", "url(#clip)");
 
     // Add the menValueLine path.
-    focus.select("g.chart-body")
+    pathMen = focus.select("g.chart-body")
         .append("path")
         .datum(data)
         .attr("id", "men")
@@ -176,7 +177,7 @@ function setup(refugees) {
         .attr("d", menValueLine);
 
     // Add the womenValueLine path.
-    focus.select("g.chart-body")
+    pathWomen = focus.select("g.chart-body")
         .append("path")
         .datum(data)
         .attr("id", "women")
@@ -184,7 +185,7 @@ function setup(refugees) {
         .attr("d", womenValueLine);
 
     // Add the childrenValueLine path.
-    focus.select("g.chart-body")
+    pathChildren = focus.select("g.chart-body")
         .append("path")
         .datum(data)
         .attr("id", "children")
@@ -192,12 +193,72 @@ function setup(refugees) {
         .attr("d", childrenValueLine);
 
     // Add the elderlyValueLine path.
-    focus.select("g.chart-body")
+    pathElderly = focus.select("g.chart-body")
         .append("path")
         .datum(data)
         .attr("id", "elderly")
         .attr("class", "line")
         .attr("d", elderlyValueLine);
+
+    // Add the men circle.
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "men")
+        .attr("class", "circle")
+        .attr("class", "depandants")
+        .attr("r", "12");
+
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "men")
+        .attr("class", "circle")
+        .attr("class", "refugees")
+        .attr("r", "8");
+
+    // Add the women circle.
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "women")
+        .attr("class", "circle")
+        .attr("class", "depandants")
+        .attr("r", "12");
+
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "women")
+        .attr("class", "circle")
+        .attr("class", "refugees")
+        .attr("r", "8");
+
+    // Add the children circle.
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "children")
+        .attr("class", "circle")
+        .attr("class", "depandants")
+        .attr("r", "12");
+
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "children")
+        .attr("class", "circle")
+        .attr("class", "refugees")
+        .attr("r", "8");
+
+    // Add the elderly circle.
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "elderly")
+        .attr("class", "circle")
+        .attr("class", "depandants")
+        .attr("r", "12");
+
+    focus.select("g.chart-body")
+        .append("circle")
+        .attr("id", "elderly")
+        .attr("class", "circle")
+        .attr("class", "refugees")
+        .attr("r", "8");
 
     minimap.append("g")
         .attr("class", "axis axis--x")
@@ -231,120 +292,99 @@ function setup(refugees) {
     minimap.append("g")
         .attr("class", "brush")
         .call(brush)
-        .call(brush.move, x.range());
+        .call(brush.move, [0, 32]);
 
-    svg.append("rect")
-        .attr("class", "zoom")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .call(zoom);
-
-    setInterval(function () {
-        addDataPoint();
-    }, 1000);
+    // svg.append("rect")
+    //     .attr("class", "zoom")
+    //     .attr("width", width)
+    //     .attr("height", height)
+    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    //     .call(zoom);
 
     setInterval(() => {
-        if (counter < allData.length) {
+        if (brushX + 32 < width) {
             update();
         }
-    }, 1100);
+    }, 1000 / 60);
 }
 
 function update() {
-    // Scale the range of the data
-    x.domain(d3.extent(data, function (d) {
-        return d.period;
-    }));
-    y.domain([0, d3.max(data, function (d) {
-        return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
-    })]);
+    var yPos = 940 - 12;
+    var transitionDuration = 10;
+    brushX = brushX + 0.1;
 
-    var transitionEaseLinear = d3.transition()
-        .duration(1000)
-        .ease(transformTransition);
+    minimap.select("g.brush")
+        .call(brush)
+        .call(brush.move, [brushX, brushX + 32]);
 
-    focus.select("#men").attr("d", menValueLine).transition(transitionEaseLinear).attr("transform", "translate(" + (x(0) - x(1000)) + ")");
-    focus.select("#women").transition(transitionEaseLinear).attr("d", womenValueLine);
-    focus.select("#children").transition(transitionEaseLinear).attr("d", childrenValueLine);
-    focus.select("#elderly").transition(transitionEaseLinear).attr("d", elderlyValueLine);
+    var circleMenPoint = findYatX(yPos, pathMen);
+    var circleWomenPoint = findYatX(yPos, pathWomen);
+    var circleChildrenPoint = findYatX(yPos, pathChildren);
+    var circleElderlyPoint = findYatX(yPos, pathElderly);
 
-    // Rescale x axis
-    focus.select(".axis--x").transition(transitionEaseLinear).call(xAxis);
+    d3.select("circle#men.refugees")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleMenPoint.y);
 
-    // Rescale y axis
-    y.domain([0, d3.max(data, function (d) {
-        if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
-            return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
-        }
-    })]);
+    d3.select("circle#men.depandants")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleMenPoint.y);
 
-    focus.select(".axis--y")
-        .transition(transitionEaseLinear)
-        .call(yAxis);
+    d3.select("circle#women.refugees")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleWomenPoint.y);
 
-    updateValueLines();
-}
+    d3.select("circle#women.depandants")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleWomenPoint.y);
 
-function updateValueLines() {
-    // Add the menValueLine path.
-    focus.select("path#men")
-        .datum(data)
-        .attr("d", menValueLine);
+    d3.select("circle#children.refugees")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleChildrenPoint.y);
 
-    // Add the womenValueLine path.
-    focus.select("path#women")
-        .datum(data)
-        .attr("d", womenValueLine);
+    d3.select("circle#children.depandants")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleChildrenPoint.y);
 
-    // Add the childrenValueLine path.
-    focus.select("path#children")
-        .datum(data)
-        .attr("d", childrenValueLine);
+    d3.select("circle#elderly.refugees")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleElderlyPoint.y);
 
-    // Add the elderlyValueLine path.
-    focus.select("path#elderly")
-        .datum(data)
-        .attr("d", elderlyValueLine);
-
-    // minimap.append("g")
-    //     .attr("class", "axis axis--x")
-    //     .attr("transform", "translate(0," + heightMinimap + ")")
-    //     .call(xAxisMinimap);
-
-    // minimap.append("path")
-    //     .datum(data)
-    //     .attr("id", "men")
-    //     .attr("class", "line")
-    //     .attr("d", menValueLineMinimap);
-
-    // minimap.append("path")
-    //     .datum(data)
-    //     .attr("id", "women")
-    //     .attr("class", "line")
-    //     .attr("d", womenValueLineMinimap);
-
-    // minimap.append("path")
-    //     .datum(data)
-    //     .attr("id", "children")
-    //     .attr("class", "line")
-    //     .attr("d", childrenValueLineMinimap);
-
-    // minimap.append("path")
-    //     .datum(data)
-    //     .attr("id", "elderly")
-    //     .attr("class", "line")
-    //     .attr("d", elderlyValueLineMinimap);
-}
-
-function addDataPoint() {
-    this.data.push(this.allData[counter]);
-
-    counter++;
-
-    // while (data.length > 62) {
-    //     data.shift();
-    // }
+    d3.select("circle#elderly.depandants")
+        .transition(d3.transition()
+            .delay(0)
+            .duration(transitionDuration)
+            .ease(transformTransition))
+        .attr("cx", yPos)
+        .attr("cy", circleElderlyPoint.y);
 }
 
 function brushed() {
@@ -412,6 +452,36 @@ function zoomed() {
         .call(yAxis);
 
     minimap.select(".brush").call(brush.move, x.range().map(t.invertX, t));
+}
+
+// Get Y at given X on curved line
+var findYatX = function (x, path) {
+    var pathEl = path.node();
+
+    var pathLength = pathEl.getTotalLength();
+    var BBox = pathEl.getBBox();
+    var scale = pathLength / BBox.width;
+
+    var beginning = x,
+        end = pathLength,
+        target,
+        pos;
+    while (true) {
+        target = Math.floor((beginning + end) / 2);
+        pos = pathEl.getPointAtLength(target);
+
+        if ((target === end || target === beginning) && pos.x !== x) {
+            break;
+        }
+
+        if (pos.x > x) end = target;
+        else if (pos.x < x) beginning = target;
+        else {
+            break;
+        }
+    }
+
+    return pos;
 }
 
 function yAxisPadding(maxValue) {

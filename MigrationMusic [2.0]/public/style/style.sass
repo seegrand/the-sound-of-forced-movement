@@ -1,3 +1,10 @@
+$color-background: white
+
+$color-men: #ED7D31
+$color-women: #68C554
+$color-children: #DD2754
+$color-elderly: #FFC000
+
 body
   padding: 50px
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
@@ -5,30 +12,60 @@ body
 a
   color: #00B7FF
 
-.line
-  fill: none
-  stroke: steelblue
-  stroke-width: 2px
+.focus > .chart-body > .line
+  stroke-dasharray: 8
 
 #men.line
   fill: none
-  stroke: red
+  stroke: $color-men
   stroke-width: 2px
 
 #women.line
   fill: none
-  stroke: yellow
+  stroke: $color-women
   stroke-width: 2px
 
 #children.line
   fill: none
-  stroke: lightblue
+  stroke: $color-children
   stroke-width: 2px
 
 #elderly.line
   fill: none
-  stroke: green
+  stroke: $color-elderly
   stroke-width: 2px
+
+#men.refugees
+  fill: $color-men
+
+#men.depandants
+  stroke: $color-men
+  stroke-width: 2px
+  fill: $color-background
+
+#women.refugees
+  fill: $color-women
+
+#women.depandants
+  stroke: $color-women
+  stroke-width: 2px
+  fill: $color-background
+
+#children.refugees
+  fill: $color-children
+
+#children.depandants
+  stroke: $color-children
+  stroke-width: 2px
+  fill: $color-background
+
+#elderly.refugees
+  fill: $color-elderly
+
+#elderly.depandants
+  stroke: $color-elderly
+  stroke-width: 2px
+  fill: $color-background
 
 .zoom
   cursor: move
