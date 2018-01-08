@@ -1,9 +1,49 @@
 body {
+  background-color: #090C19;
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+  font: 14px 'Spectral', Helvetica, Arial, sans-serif;
+  color: #F1F1F1; }
 
 a {
-  color: #00B7FF; }
+  color: #D6D6D6; }
+
+h1 {
+  font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif !important;
+  font-size: 75px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 500;
+  line-height: 26.4px; }
+
+.detail-text-left {
+  width: 260px; }
+
+#graph {
+  position: absolute;
+  top: 70px;
+  left: 220px;
+  z-index: -1; }
+
+#graph-overlay {
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), #090C19);
+  position: absolute;
+  top: 70px;
+  left: 220px;
+  width: 540px;
+  height: 668px;
+  z-index: -1; }
+
+.axis {
+  font: 12px Spectral; }
+
+.axis--white line {
+  stroke: #F1F1F1; }
+
+.axis--white path {
+  stroke: #F1F1F1; }
+
+.axis--white text {
+  fill: #F1F1F1; }
 
 .focus > .chart-body > .line {
   stroke-dasharray: 8; }
@@ -29,36 +69,44 @@ a {
   stroke-width: 2px; }
 
 #men.refugees {
-  fill: #ED7D31; }
+  fill: #ED7D31;
+  stroke: #090C19;
+  stroke-width: 3px; }
 
 #men.depandants {
-  stroke: #ED7D31;
-  stroke-width: 2px;
-  fill: white; }
+  stroke: #090C19;
+  stroke-width: 4px;
+  fill: #ED7D31; }
 
 #women.refugees {
-  fill: #68C554; }
+  fill: #68C554;
+  stroke: #090C19;
+  stroke-width: 3px; }
 
 #women.depandants {
-  stroke: #68C554;
-  stroke-width: 2px;
-  fill: white; }
+  stroke: #090C19;
+  stroke-width: 4px;
+  fill: #68C554; }
 
 #children.refugees {
-  fill: #DD2754; }
+  fill: #DD2754;
+  stroke: #090C19;
+  stroke-width: 3px; }
 
 #children.depandants {
-  stroke: #DD2754;
-  stroke-width: 2px;
-  fill: white; }
+  stroke: #090C19;
+  stroke-width: 4px;
+  fill: #DD2754; }
 
 #elderly.refugees {
-  fill: #FFC000; }
+  fill: #FFC000;
+  stroke: #090C19;
+  stroke-width: 3px; }
 
 #elderly.depandants {
-  stroke: #FFC000;
-  stroke-width: 2px;
-  fill: white; }
+  stroke: #090C19;
+  stroke-width: 4px;
+  fill: #FFC000; }
 
 .zoom {
   cursor: move;

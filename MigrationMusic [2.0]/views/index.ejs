@@ -5,6 +5,9 @@
   <title>
     <%= title %>
   </title>
+  <!--Import Spectral Font-->
+  <link href='https://fonts.googleapis.com/css?family=Spectral' rel='stylesheet'>
+
   <!--Import Material Icons-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -22,17 +25,32 @@
   <script type="text/javascript" src="/lib/d3/d3.min.js" defer></script>
 
   <script type="text/javascript" src="/lib/tabletop/src/tabletop.min.js" defer></script>
+
+  <script type="text/javascript" src="/lib/midi/midi.min.js" defer></script>
+
+  <!-- shim -->
+  <script type="text/javascript" src="/lib/shim/Base64.js" defer></script>
+  <script type="text/javascript" src="/lib/shim/Base64binary.js" defer></script>
+  <script type="text/javascript" src="/lib/shim/WebAudioAPI.js" defer></script>
+  <script type="text/javascript" src="/lib/shim/WebMIDIAPI.js" defer></script>
 </head>
 
 <body>
-  <h1>
-    <%= title %>
+  <h1 id="country">
+
   </h1>
-  <p>Welcome to
-    <%= title %>
+  <p class="detail-text-left">According to the IOM, more than 3,770 migrants were reported to have died trying to cross the Mediterranean in 2015. Most
+    died on the crossing from north Africa to Italy, and more than 800 died in the Aegean crossing from Turkey to Greece.
+    The summer months are usually when most fatalities occur as it is the busiest time for migrants attempting to reach Europe.
+    But in 2015, the deadliest month for migrants was April, which saw a boat carrying about 800 people capsize in the sea
+    off Libya. Overcrowding is thought to have been one of the reasons for the disaster.
   </p>
 
+  <div id="graph"></div>
+  <div id="graph-overlay"></div>
+
   <script type="text/javascript" src="/js/data-collector.js"></script>
+  <script type="text/javascript" src="/js/midi-helper.js"></script>
   <script type="text/javascript" src="/js/migration-music.js"></script>
 
   <!-- CLASSES -->
@@ -45,7 +63,7 @@
     var refugees;
 
     window.addEventListener('DOMContentLoaded', () => {
-      init(() => start(refugees));
+      initMidi(() => initData(() => start(refugees)));
     });
   </script>
 </body>

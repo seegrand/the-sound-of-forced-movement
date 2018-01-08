@@ -1,4 +1,6 @@
-$color-background: white
+$color-background: #090C19
+$color-text: #F1F1F1
+$color-text-dark: #D6D6D6
 
 $color-men: #ED7D31
 $color-women: #68C554
@@ -6,11 +8,51 @@ $color-children: #DD2754
 $color-elderly: #FFC000
 
 body
+  background-color: $color-background
   padding: 50px
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+  font: 14px 'Spectral', Helvetica, Arial, sans-serif
+  color: $color-text
 
 a
-  color: #00B7FF
+  color: $color-text-dark
+
+h1
+	font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif !important
+	font-size: 75px
+	font-style: normal
+	font-variant: normal
+	font-weight: 500
+	line-height: 26.4px
+
+.detail-text-left
+  width: 260px
+
+#graph
+  position: absolute
+  top: 70px
+  left: 220px
+  z-index: -1
+
+#graph-overlay
+  background: linear-gradient(to left, rgba(255,255,255,0), $color-background)
+  position: absolute
+  top: 70px
+  left: 220px
+  width: 540px;
+  height: 668px;
+  z-index: -1
+
+.axis
+  font: 12px Spectral
+
+.axis--white line
+  stroke: $color-text
+
+.axis--white path
+  stroke: $color-text
+
+.axis--white text
+  fill: $color-text
 
 .focus > .chart-body > .line
   stroke-dasharray: 8
@@ -37,35 +79,43 @@ a
 
 #men.refugees
   fill: $color-men
+  stroke: $color-background
+  stroke-width: 3px
 
 #men.depandants
-  stroke: $color-men
-  stroke-width: 2px
-  fill: $color-background
+  stroke: $color-background
+  stroke-width: 4px
+  fill: $color-men
 
 #women.refugees
   fill: $color-women
+  stroke: $color-background
+  stroke-width: 3px
 
 #women.depandants
-  stroke: $color-women
-  stroke-width: 2px
-  fill: $color-background
+  stroke: $color-background
+  stroke-width: 4px
+  fill: $color-women
 
 #children.refugees
   fill: $color-children
+  stroke: $color-background
+  stroke-width: 3px
 
 #children.depandants
-  stroke: $color-children
-  stroke-width: 2px
-  fill: $color-background
+  stroke: $color-background
+  stroke-width: 4px
+  fill: $color-children
 
 #elderly.refugees
   fill: $color-elderly
+  stroke: $color-background
+  stroke-width: 3px
 
 #elderly.depandants
-  stroke: $color-elderly
-  stroke-width: 2px
-  fill: $color-background
+  stroke: $color-background
+  stroke-width: 4px
+  fill: $color-elderly
 
 .zoom
   cursor: move
