@@ -323,7 +323,8 @@ var playedNotes = {
     "first": false,
     "second": false,
     "third": false,
-    "fourth": false
+    "fourth": false,
+    "fifth": false
 };
 
 function update() {
@@ -346,46 +347,57 @@ function update() {
     switch (currentDate) {
         case 1:
             if (!playedNotes.first) {
-                playNote(channels.men, mapNote(0, height, circleMenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.women, mapNote(0, height, circleWomenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.children, mapNote(0, height, circleChildrenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.elderly, mapNote(0, height, circleElderlyPoint.y), 127, 0, 0, 0.75);
+                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
+                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
+                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
+                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
 
                 playedNotes.first = true;
-                playedNotes.fourth = false;
+                playedNotes.fifth = false;
             }
             break;
-        case 9:
+        case 8:
             if (!playedNotes.second) {
-                playNote(channels.men, mapNote(0, height, circleMenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.women, mapNote(0, height, circleWomenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.children, mapNote(0, height, circleChildrenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.elderly, mapNote(0, height, circleElderlyPoint.y), 127, 0, 0, 0.75);
+                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
+                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
+                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
+                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
 
                 playedNotes.second = true;
                 playedNotes.first = false;
             }
             break;
-        case 17:
+        case 15:
             if (!playedNotes.third) {
-                playNote(channels.men, mapNote(0, height, circleMenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.women, mapNote(0, height, circleWomenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.children, mapNote(0, height, circleChildrenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.elderly, mapNote(0, height, circleElderlyPoint.y), 127, 0, 0, 0.75);
+                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
+                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
+                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
+                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
 
                 playedNotes.third = true;
                 playedNotes.second = false;
             }
             break;
-        case 25:
+        case 22:
             if (!playedNotes.fourth) {
-                playNote(channels.men, mapNote(0, height, circleMenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.women, mapNote(0, height, circleWomenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.children, mapNote(0, height, circleChildrenPoint.y), 127, 0, 0, 0.75);
-                playNote(channels.elderly, mapNote(0, height, circleElderlyPoint.y), 127, 0, 0, 0.75);
+                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
+                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
+                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
+                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
 
                 playedNotes.fourth = true;
                 playedNotes.third = false;
+            }
+            break;
+        case 28:
+            if (!playedNotes.fifth) {
+                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
+                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
+                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
+                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
+
+                playedNotes.fifth = true;
+                playedNotes.fourth = false;
             }
             break;
     }
