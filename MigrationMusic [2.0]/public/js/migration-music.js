@@ -1,6 +1,6 @@
 var data;
 
-var svgWidth = 1000;
+var svgWidth = 1600;
 var svgHeight = 800;
 var svgMinimapHeight = 120;
 
@@ -35,6 +35,9 @@ var zoom;
 
 var graphAreaMargin = 200;
 
+var showRefugees = true;
+var showDepandants = true;
+
 var pathMen;
 var pathWomen;
 var pathChildren;
@@ -59,8 +62,9 @@ var womenValueLineMinimap;
 var childrenValueLineMinimap;
 var elderlyValueLineMinimap;
 
-function start(data) {
-    this.data = data;
+function start(refugees) {
+    data = refugees;
+
     this.transformTransition = d3.easeLinear;
     this.transformTransitionDuration = 1000;
 
@@ -80,9 +84,6 @@ function start(data) {
     width = svgWidth - margin.left - margin.right;
     height = svgHeight - margin.top - margin.bottom;
     heightMinimap = svgHeight - marginMinimap.top - marginMinimap.bottom;
-
-    // Parse the date / time
-    var parseTime = d3.timeParse("%Y-%m");
 
     // Set the ranges
     x = d3.scaleTime().range([0, width]);
@@ -151,6 +152,9 @@ function start(data) {
         .attr("class", "minimap")
         .attr("transform", "translate(" + marginMinimap.left + "," + marginMinimap.top + ")");
 
+    // Parse the date / time
+    var parseTime = d3.timeParse("%Y-%m");
+
     // Format the data
     data.forEach(function (d) {
         d.period = parseTime(d.period);
@@ -161,7 +165,13 @@ function start(data) {
         return d.period;
     }));
     y.domain([0, d3.max(data, function (d) {
-        return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+        if (showRefugees && showDepandants) {
+            return Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal) + yAxisPadding(Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal));
+        } else if (showRefugees) {
+            return Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees) + yAxisPadding(Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees));
+        } else if (showDepandants) {
+            return Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants) + yAxisPadding(Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants));
+        }
     })]);
 
     xMinimap.domain(x.domain());
@@ -331,7 +341,7 @@ function update() {
     var xPos = width - 14 - graphAreaMargin;
 
     if (brushX + 32 < width) {
-        brushX = brushX + 0.15;
+        brushX = brushX + 0.4;
 
         minimap.select("g.brush")
             .call(brush.move, [brushX, brushX + 32]);
@@ -344,13 +354,21 @@ function update() {
 
     var currentDate = x.invert(xPos).getDate();
 
+    var maxHeight = height - 200;
+    var noteLength = 0.30;
+
+    var menDelay = 0;
+    var womenDelay = 0.15;
+    var childrenDelay = 0.30;
+    var elderlyDelay = 0.45;
+
     switch (currentDate) {
         case 1:
             if (!playedNotes.first) {
-                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
-                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
-                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
-                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.first = true;
                 playedNotes.fifth = false;
@@ -358,10 +376,10 @@ function update() {
             break;
         case 8:
             if (!playedNotes.second) {
-                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
-                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
-                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
-                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.second = true;
                 playedNotes.first = false;
@@ -369,10 +387,10 @@ function update() {
             break;
         case 15:
             if (!playedNotes.third) {
-                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
-                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
-                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
-                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.third = true;
                 playedNotes.second = false;
@@ -380,21 +398,21 @@ function update() {
             break;
         case 22:
             if (!playedNotes.fourth) {
-                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
-                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
-                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
-                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.fourth = true;
                 playedNotes.third = false;
             }
             break;
-        case 28:
+        case 29:
             if (!playedNotes.fifth) {
-                playNote(channels.men, mapNote(height, 0, circleMenPoint.y), 127, 0, 0, 100);
-                playNote(channels.women, mapNote(height, 0, circleWomenPoint.y), 127, 0, 0, 100);
-                playNote(channels.children, mapNote(height, 0, circleChildrenPoint.y), 127, 0, 0, 100);
-                playNote(channels.elderly, mapNote(height, 0, circleElderlyPoint.y), 127, 0, 0, 100);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.fifth = true;
                 playedNotes.fourth = false;
@@ -450,7 +468,13 @@ function brushed() {
     // Rescale y axis
     y.domain([0, d3.max(data, function (d) {
         if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
-            return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+            if (showRefugees && showDepandants) {
+                return Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal) + yAxisPadding(Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal));
+            } else if (showRefugees) {
+                return Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugeess, d.elderlyRefugees) + yAxisPadding(Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees));
+            } else if (showDepandants) {
+                return Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants) + yAxisPadding(Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants));
+            }
         }
     })]);
 
@@ -484,8 +508,12 @@ function zoomed() {
 
     // Rescale y axis
     y.domain([0, d3.max(data, function (d) {
-        if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
-            return Math.max(d.men, d.women, d.children, d.elderly) + yAxisPadding(Math.max(d.men, d.women, d.children, d.elderly));
+        if (showRefugees && showDepandants) {
+            return Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal) + yAxisPadding(Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal));
+        } else if (showRefugees) {
+            return Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugeess, d.elderlyRefugees) + yAxisPadding(Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees));
+        } else if (showDepandants) {
+            return Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants) + yAxisPadding(Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants));
         }
     })]);
 

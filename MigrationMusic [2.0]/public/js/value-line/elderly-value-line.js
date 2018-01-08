@@ -4,7 +4,17 @@ function ElderlyValueLine(x, y) {
             return x(d.period);
         })
         .y(function (d) {
-            return y(d.elderly);
+            if (showRefugees && showDepandants) {
+                return y(d.elderlyTotal);
+            }
+
+            if (showRefugees) {
+                return y(d.elderlyshowRefugees);
+            }
+
+            if (showDepandants) {
+                return y(d.elderlyshowDepandants);
+            }
         })
         .curve(d3.curveCardinal);
 

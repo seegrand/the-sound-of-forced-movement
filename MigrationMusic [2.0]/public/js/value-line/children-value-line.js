@@ -4,7 +4,17 @@ function ChildrenValueLine(x, y) {
             return x(d.period);
         })
         .y(function (d) {
-            return y(d.children);
+            if (showRefugees && showDepandants) {
+                return y(d.childrenTotal);
+            }
+
+            if (showRefugees) {
+                return y(d.childrenshowRefugees);
+            }
+
+            if (showDepandants) {
+                return y(d.childrenshowDepandants);
+            }
         })
         .curve(d3.curveCardinal);
 

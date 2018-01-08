@@ -4,7 +4,17 @@ function WomenValueLine(x, y) {
             return x(d.period);
         })
         .y(function (d) {
-            return y(d.women);
+            if (showRefugees && showDepandants) {
+                return y(d.womenTotal);
+            }
+
+            if (showRefugees) {
+                return y(d.womenshowRefugees);
+            }
+
+            if (showDepandants) {
+                return y(d.womenshowDepandants);
+            }
         })
         .curve(d3.curveCardinal);
 

@@ -4,7 +4,17 @@ function MenValueLine(x, y) {
             return x(d.period);
         })
         .y(function (d) {
-            return y(d.men);
+            if (showRefugees && showDepandants) {
+                return y(d.menTotal);
+            }
+
+            if (showRefugees) {
+                return y(d.menshowRefugees);
+            }
+
+            if (showDepandants) {
+                return y(d.menshowDepandants);
+            }
         })
         .curve(d3.curveCardinal);
 

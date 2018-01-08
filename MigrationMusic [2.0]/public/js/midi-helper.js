@@ -1,13 +1,14 @@
 var instrumentNames = [
-    "acoustic_guitar_steel",
-    "bright_acoustic_piano",
-    "celesta",
-    "marimba"
+    // "violin",
+    "honkytonk_piano",
+    // "acoustic_guitar_steel",
+    "contrabass",
+    "banjo",
+    "cello"
     // "clarinet",
     // "clavinet",
     // "contrabass",
     // "distortion_guitar",
-    // "glockenspiel",
     // "harmonica",
     // "honkytonk_piano",
     // "kalimba",
@@ -23,6 +24,7 @@ var channels = {
 
 var octave = 12;
 var totalNotes = 128;
+var maxVolume = 127;
 
 function initMidi(callback) {
     console.log("Initializing MIDI.js...");
@@ -64,5 +66,9 @@ function playNote(channel, note, volume, delay, length) {
 }
 
 function mapNote(min, max, value) {
-    return Math.round(value.map(min, max, 0, totalNotes - 1));
+    return Math.round(value.map(min, max, 60, totalNotes - 1 - 24));
+}
+
+function mapVolume(min, max, value) {
+    return Math.round(value.map(min, max, 1, maxVolume));
 }
