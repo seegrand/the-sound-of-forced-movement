@@ -2,7 +2,7 @@ var instrumentNames = [
     // "violin",
     "honkytonk_piano",
     // "acoustic_guitar_steel",
-    "contrabass",
+    "marimba",
     "banjo",
     "cello"
     // "clarinet",
@@ -62,7 +62,7 @@ function initMidi(callback) {
 
 function playNote(channel, note, volume, delay, length) {
     MIDI.noteOn(channel, note, volume, delay);
-    MIDI.noteOff(channel, note, volume, delay + length);
+    MIDI.noteOff(channel, note, delay + length);
 }
 
 function mapNote(min, max, value) {

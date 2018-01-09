@@ -6,14 +6,10 @@ function ChildrenValueLine(x, y) {
         .y(function (d) {
             if (showRefugees && showDepandants) {
                 return y(d.childrenTotal);
-            }
-
-            if (showRefugees) {
-                return y(d.childrenshowRefugees);
-            }
-
-            if (showDepandants) {
-                return y(d.childrenshowDepandants);
+            } else if (showRefugees) {
+                return y(d.childrenRefugees);
+            } else if (showDepandants) {
+                return y(d.childrenDepandants);
             }
         })
         .curve(d3.curveCardinal);

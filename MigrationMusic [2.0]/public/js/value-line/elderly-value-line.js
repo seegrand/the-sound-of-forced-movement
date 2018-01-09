@@ -6,14 +6,10 @@ function ElderlyValueLine(x, y) {
         .y(function (d) {
             if (showRefugees && showDepandants) {
                 return y(d.elderlyTotal);
-            }
-
-            if (showRefugees) {
-                return y(d.elderlyshowRefugees);
-            }
-
-            if (showDepandants) {
-                return y(d.elderlyshowDepandants);
+            } else if (showRefugees) {
+                return y(d.elderlyRefugees);
+            } else if (showDepandants) {
+                return y(d.elderlyDepandants);
             }
         })
         .curve(d3.curveCardinal);

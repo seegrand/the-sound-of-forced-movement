@@ -35,6 +35,13 @@ var zoom;
 
 var graphAreaMargin = 200;
 
+var paused = false;
+
+var showMen = true;
+var showWomen = true;
+var showChildren = true;
+var showElderly = true;
+
 var showRefugees = true;
 var showDepandants = true;
 
@@ -64,6 +71,8 @@ var elderlyValueLineMinimap;
 
 function start(refugees) {
     data = refugees;
+
+    console.log(data);
 
     this.transformTransition = d3.easeLinear;
     this.transformTransitionDuration = 1000;
@@ -165,13 +174,7 @@ function start(refugees) {
         return d.period;
     }));
     y.domain([0, d3.max(data, function (d) {
-        if (showRefugees && showDepandants) {
-            return Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal) + yAxisPadding(Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal));
-        } else if (showRefugees) {
-            return Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees) + yAxisPadding(Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees));
-        } else if (showDepandants) {
-            return Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants) + yAxisPadding(Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants));
-        }
+        return calculateDomainY(d);
     })]);
 
     xMinimap.domain(x.domain());
@@ -326,6 +329,9 @@ function start(refugees) {
     //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     //     .call(zoom);
 
+    initControls();
+    initInteraction();
+
     window.requestAnimationFrame(update);
 }
 
@@ -340,11 +346,13 @@ var playedNotes = {
 function update() {
     var xPos = width - 14 - graphAreaMargin;
 
-    if (brushX + 32 < width) {
-        brushX = brushX + 0.4;
+    if (!paused) {
+        if (brushX + 32 < width) {
+            brushX = brushX + 0.4;
 
-        minimap.select("g.brush")
-            .call(brush.move, [brushX, brushX + 32]);
+            minimap.select("g.brush")
+                .call(brush.move, [brushX, brushX + 32]);
+        }
     }
 
     var circleMenPoint = findYatX(xPos, pathMen);
@@ -355,20 +363,20 @@ function update() {
     var currentDate = x.invert(xPos).getDate();
 
     var maxHeight = height - 200;
-    var noteLength = 0.30;
+    var noteLength = 100;
 
     var menDelay = 0;
-    var womenDelay = 0.15;
-    var childrenDelay = 0.30;
-    var elderlyDelay = 0.45;
+    var womenDelay = 0.1;
+    var childrenDelay = 0.2;
+    var elderlyDelay = 0.3;
 
     switch (currentDate) {
         case 1:
             if (!playedNotes.first) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.first = true;
                 playedNotes.fifth = false;
@@ -376,10 +384,10 @@ function update() {
             break;
         case 8:
             if (!playedNotes.second) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.second = true;
                 playedNotes.first = false;
@@ -387,10 +395,10 @@ function update() {
             break;
         case 15:
             if (!playedNotes.third) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.third = true;
                 playedNotes.second = false;
@@ -398,10 +406,10 @@ function update() {
             break;
         case 22:
             if (!playedNotes.fourth) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.fourth = true;
                 playedNotes.third = false;
@@ -409,10 +417,10 @@ function update() {
             break;
         case 29:
             if (!playedNotes.fifth) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(0, maxHeight, circleMenPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.fifth = true;
                 playedNotes.fourth = false;
@@ -447,6 +455,14 @@ function update() {
     window.requestAnimationFrame(update);
 }
 
+function updateMinimap() {
+    yMinimap.domain(y.domain());
+
+    var transitionEaseLinear = d3.transition()
+        .duration(transformTransitionDuration)
+        .ease(transformTransition);
+}
+
 function brushed() {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
 
@@ -468,13 +484,7 @@ function brushed() {
     // Rescale y axis
     y.domain([0, d3.max(data, function (d) {
         if (d.period >= x.domain()[0] && d.period <= x.domain()[1]) {
-            if (showRefugees && showDepandants) {
-                return Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal) + yAxisPadding(Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal));
-            } else if (showRefugees) {
-                return Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugeess, d.elderlyRefugees) + yAxisPadding(Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees));
-            } else if (showDepandants) {
-                return Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants) + yAxisPadding(Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants));
-            }
+            return calculateDomainY(d);
         }
     })]);
 
@@ -508,13 +518,7 @@ function zoomed() {
 
     // Rescale y axis
     y.domain([0, d3.max(data, function (d) {
-        if (showRefugees && showDepandants) {
-            return Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal) + yAxisPadding(Math.max(d.menTotal, d.womenTotal, d.childrenTotal, d.elderlyTotal));
-        } else if (showRefugees) {
-            return Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugeess, d.elderlyRefugees) + yAxisPadding(Math.max(d.menRefugees, d.womenRefugees, d.childrenRefugees, d.elderlyRefugees));
-        } else if (showDepandants) {
-            return Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants) + yAxisPadding(Math.max(d.menDepandants, d.womenDepandants, d.childrenDepandants, d.elderlyDepandants));
-        }
+        return calculateDomainY(d);
     })]);
 
     focus.select(".axis--y")
@@ -554,6 +558,87 @@ function findYatX(x, path) {
     return pos;
 }
 
+function calculateDomainY(d) {
+    var domainTotal = [];
+    domainTotal[0] = d.menTotal;
+    domainTotal[1] = d.womenTotal;
+    domainTotal[2] = d.childrenTotal;
+    domainTotal[3] = d.elderlyTotal;
+
+    var domainRefugees = [];
+    domainRefugees[0] = d.menRefugees;
+    domainRefugees[1] = d.womenRefugees;
+    domainRefugees[2] = d.childrenRefugees;
+    domainRefugees[3] = d.elderlyRefugees;
+
+    var domainDepandants = [];
+    domainDepandants[0] = d.menDepandants;
+    domainDepandants[1] = d.womenDepandants;
+    domainDepandants[2] = d.childrenDepandants;
+    domainDepandants[3] = d.elderlyDepandants;
+
+    if (!showMen) {
+        remove(domainTotal, d.menTotal);
+        remove(domainRefugees, d.menRefugees);
+        remove(domainDepandants, d.menDepandants);
+    }
+
+    if (!showWomen) {
+        remove(domainTotal, d.womenTotal);
+        remove(domainRefugees, d.womenRefugees);
+        remove(domainDepandants, d.womenDepandants);
+    }
+
+    if (!showChildren) {
+        remove(domainTotal, d.childrenTotal);
+        remove(domainRefugees, d.childrenRefugees);
+        remove(domainDepandants, d.childrenDepandants);
+    }
+
+    if (!showElderly) {
+        remove(domainTotal, d.elderlyTotal);
+        remove(domainRefugees, d.elderlyRefugees);
+        remove(domainDepandants, d.elderlyDepandants);
+    }
+
+    if (showRefugees && showDepandants) {
+        var max = domainTotal.reduce(function (a, b) {
+            return Math.max(a, b);
+        });
+
+        max += yAxisPadding(domainTotal.reduce(function (a, b) {
+            return Math.max(a, b);
+        }));
+
+        return max;
+    } else if (showRefugees) {
+        var max = domainRefugees.reduce(function (a, b) {
+            return Math.max(a, b);
+        });
+
+        max += yAxisPadding(domainRefugees.reduce(function (a, b) {
+            return Math.max(a, b);
+        }));
+
+        return max;
+    } else if (showDepandants) {
+        var max = domainDepandants.reduce(function (a, b) {
+            return Math.max(a, b);
+        });
+
+        max += yAxisPadding(domainDepandants.reduce(function (a, b) {
+            return Math.max(a, b);
+        }));
+
+        return max;
+    }
+}
+
 function yAxisPadding(maxValue) {
     return maxValue * yAxisPaddingFactor;
+}
+
+function remove(array, element) {
+    const index = array.indexOf(element);
+    array.splice(index, 1);
 }

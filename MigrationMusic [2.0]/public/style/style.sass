@@ -10,7 +10,7 @@ $color-elderly: #FFC000
 body
   background-color: $color-background
   padding: 50px
-  font: 14px 'Spectral', Helvetica, Arial, sans-serif
+  font: 16px 'Spectral', Helvetica, Arial, sans-serif
   color: $color-text
 
 a
@@ -24,23 +24,31 @@ h1
 	font-weight: 500
 	line-height: 26.4px
 
+#dashboard
+  position: absolute
+  z-index: 1
+
 .detail-text-left
   width: 260px
+
+#controls
+  margin-top: 50px
+
+#controls > a
+  margin-left: 40px;
 
 #graph
   position: absolute
   top: 70px
   left: 220px
-  z-index: -1
 
 #graph-overlay
   background: linear-gradient(to left, rgba(255,255,255,0), $color-background)
   position: absolute
   top: 70px
   left: 220px
-  width: 540px;
-  height: 668px;
-  z-index: -1
+  width: 540px
+  height: 668px
 
 .axis
   font: 12px Spectral
@@ -117,7 +125,46 @@ h1
   stroke-width: 4px
   fill: $color-elderly
 
+#light.refugees
+  fill: $color-text
+  stroke: $color-background
+  stroke-width: 3px
+
+#light.depandants
+  stroke: $color-background
+  stroke-width: 4px
+  fill: $color-text
+
+#dark.refugees
+  fill: $color-background
+  stroke: $color-background
+  stroke-width: 3px
+
 .zoom
   cursor: move
   fill: none
   pointer-events: all
+
+rect.selection
+  y: 20
+  height: 70px
+
+#legenda > svg > g
+  cursor: pointer
+
+#legenda > svg > g > text
+  fill: $color-text
+
+.disabled
+  display: block
+  content: ""
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  background-color: #000
+  opacity: .2
+
+.hide
+  display: none

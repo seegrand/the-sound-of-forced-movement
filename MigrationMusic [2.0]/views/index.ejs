@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!--Import materialize.scss-->
-  <link type="text/css" rel="stylesheet" href="/lib/materialize/sass/materialize.scss" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="/lib/materialize/css/materialize.css" media="screen,projection" />
 
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,7 @@
   <link rel='stylesheet' href='/style/style.css' />
 
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js" defer></script>
-  <script type="text/javascript" src="/lib/materialize/js/bin/materialize.min.js" defer></script>
+  <script type="text/javascript" src="/lib/materialize/js/materialize.min.js" defer></script>
 
   <script type="text/javascript" src="/lib/d3/d3.min.js" defer></script>
 
@@ -36,21 +36,89 @@
 </head>
 
 <body>
-  <h1 id="country">
-    Loading...
-  </h1>
-  <p class="detail-text-left">According to the IOM, more than 3,770 migrants were reported to have died trying to cross the Mediterranean in 2015. Most
-    died on the crossing from north Africa to Italy, and more than 800 died in the Aegean crossing from Turkey to Greece.
-    The summer months are usually when most fatalities occur as it is the busiest time for migrants attempting to reach Europe.
-    But in 2015, the deadliest month for migrants was April, which saw a boat carrying about 800 people capsize in the sea
-    off Libya. Overcrowding is thought to have been one of the reasons for the disaster.
-  </p>
+  <div id="dashboard">
+    <h1 id="country">
+      Loading...
+    </h1>
+
+    <div id="controls">
+      <a id="play" class="btn-floating btn-large waves-effect waves-light #37474f blue-grey darken-3">
+        <i class="material-icons">pause</i>
+      </a>
+
+      <a id="reload" class="btn-floating btn-large waves-effect waves-light #37474f blue-grey darken-3">
+        <i class="material-icons">refresh</i>
+      </a>
+    </div>
+
+    <p class="detail-text-left">According to the IOM, more than 3,770 migrants were reported to have died trying to cross the Mediterranean in 2015.
+      Most died on the crossing from north Africa to Italy, and more than 800 died in the Aegean crossing from Turkey to
+      Greece. The summer months are usually when most fatalities occur as it is the busiest time for migrants attempting
+      to reach Europe. But in 2015, the deadliest month for migrants was April, which saw a boat carrying about 800 people
+      capsize in the sea off Libya. Overcrowding is thought to have been one of the reasons for the disaster.
+    </p>
+
+    <div id="legenda">
+      <svg width="200" height="400">
+        <g id="men">
+          <circle id="men" class="depandants" r="16" cx="16" cy="20"></circle>
+          <circle id="men" class="refugees" r="10" cx="16" cy="20"></circle>
+          <text x="40" y="28" font-family="Spectral" font-size="16">
+            Men
+          </text>
+        </g>
+
+        <g id="women">
+          <circle id="women" class="depandants" r="16" cx="16" cy="60"></circle>
+          <circle id="women" class="refugees" r="10" cx="16" cy="60"></circle>
+          <text x="40" y="68" font-family="Spectral" font-size="16">
+            Women
+          </text>
+        </g>
+
+        <g id="children">
+          <circle id="children" class="depandants" r="16" cx="16" cy="100"></circle>
+          <circle id="children" class="refugees" r="10" cx="16" cy="100"></circle>
+          <text x="40" y="108" font-family="Spectral" font-size="16">
+            Children
+          </text>
+        </g>
+
+        <g id="elderly">
+          <circle id="elderly" class="depandants" r="16" cx="16" cy="140"></circle>
+          <circle id="elderly" class="refugees" r="10" cx="16" cy="140"></circle>
+          <text x="40" y="148" font-family="Spectral" font-size="16">
+            Elderly
+          </text>
+        </g>
+
+        <g id="refugees">
+          <circle id="light" class="refugees" r="10" cx="16" cy="200"></circle>
+          <text x="40" y="208" font-family="Spectral" font-size="16">
+            Refugees
+          </text>
+        </g>
+
+        <g id="depandants">
+          <circle id="light" class="depandants" r="16" cx="16" cy="240"></circle>
+          <circle id="dark" class="refugees" r="10" cx="16" cy="240"></circle>
+          <text x="40" y="248" font-family="Spectral" font-size="16">
+            Depandants
+          </text>
+        </g>
+      </svg>
+    </div>
+  </div>
 
   <div id="graph"></div>
   <div id="graph-overlay"></div>
 
+  <!-- <audio autoplay="true" src="/sound/dikke-bmw.mp3"></audio> -->
+
   <script type="text/javascript" src="/js/data-collector.js"></script>
   <script type="text/javascript" src="/js/midi-helper.js"></script>
+  <script type="text/javascript" src="/js/controls-helper.js"></script>
+  <script type="text/javascript" src="/js/interaction-helper.js"></script>
   <script type="text/javascript" src="/js/migration-music.js"></script>
 
   <!-- CLASSES -->

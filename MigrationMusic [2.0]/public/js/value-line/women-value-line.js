@@ -6,14 +6,10 @@ function WomenValueLine(x, y) {
         .y(function (d) {
             if (showRefugees && showDepandants) {
                 return y(d.womenTotal);
-            }
-
-            if (showRefugees) {
-                return y(d.womenshowRefugees);
-            }
-
-            if (showDepandants) {
-                return y(d.womenshowDepandants);
+            } else if (showRefugees) {
+                return y(d.womenRefugees);
+            } else if (showDepandants) {
+                return y(d.womenDepandants);
             }
         })
         .curve(d3.curveCardinal);

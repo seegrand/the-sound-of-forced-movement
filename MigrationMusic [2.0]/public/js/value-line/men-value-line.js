@@ -6,14 +6,10 @@ function MenValueLine(x, y) {
         .y(function (d) {
             if (showRefugees && showDepandants) {
                 return y(d.menTotal);
-            }
-
-            if (showRefugees) {
-                return y(d.menshowRefugees);
-            }
-
-            if (showDepandants) {
-                return y(d.menshowDepandants);
+            } else if (showRefugees) {
+                return y(d.menRefugees);
+            } else if (showDepandants) {
+                return y(d.menDepandants);
             }
         })
         .curve(d3.curveCardinal);

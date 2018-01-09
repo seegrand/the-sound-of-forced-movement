@@ -1,7 +1,7 @@
 body {
   background-color: #090C19;
   padding: 50px;
-  font: 14px 'Spectral', Helvetica, Arial, sans-serif;
+  font: 16px 'Spectral', Helvetica, Arial, sans-serif;
   color: #F1F1F1; }
 
 a {
@@ -15,14 +15,23 @@ h1 {
   font-weight: 500;
   line-height: 26.4px; }
 
+#dashboard {
+  position: absolute;
+  z-index: 1; }
+
 .detail-text-left {
   width: 260px; }
+
+#controls {
+  margin-top: 50px; }
+
+#controls > a {
+  margin-left: 40px; }
 
 #graph {
   position: absolute;
   top: 70px;
-  left: 220px;
-  z-index: -1; }
+  left: 220px; }
 
 #graph-overlay {
   background: linear-gradient(to left, rgba(255, 255, 255, 0), #090C19);
@@ -30,8 +39,7 @@ h1 {
   top: 70px;
   left: 220px;
   width: 540px;
-  height: 668px;
-  z-index: -1; }
+  height: 668px; }
 
 .axis {
   font: 12px Spectral; }
@@ -108,9 +116,48 @@ h1 {
   stroke-width: 4px;
   fill: #FFC000; }
 
+#light.refugees {
+  fill: #F1F1F1;
+  stroke: #090C19;
+  stroke-width: 3px; }
+
+#light.depandants {
+  stroke: #090C19;
+  stroke-width: 4px;
+  fill: #F1F1F1; }
+
+#dark.refugees {
+  fill: #090C19;
+  stroke: #090C19;
+  stroke-width: 3px; }
+
 .zoom {
   cursor: move;
   fill: none;
   pointer-events: all; }
+
+rect.selection {
+  y: 20;
+  height: 70px; }
+
+#legenda > svg > g {
+  cursor: pointer; }
+
+#legenda > svg > g > text {
+  fill: #F1F1F1; }
+
+.disabled {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  opacity: .2; }
+
+.hide {
+  display: none; }
 
 /*# sourceMappingURL=style.css.map */
