@@ -61,12 +61,18 @@ function initMidi(callback) {
 };
 
 function playNote(channel, note, volume, delay, length) {
-    MIDI.noteOn(channel, note, volume, delay);
-    MIDI.noteOff(channel, note, delay + length);
+    if (channel == channels.men && showMen ||
+        channel == channels.women && showWomen ||
+        channel == channels.children && showChildren ||
+        channel == channels.elderly && showElderly) {
+
+        MIDI.noteOn(channel, note, volume, delay);
+        MIDI.noteOff(channel, note, delay + length);
+    }
 }
 
 function mapNote(min, max, value) {
-    return Math.round(value.map(min, max, 60, totalNotes - 1 - 24));
+    return Math.round(value.map(min, max, 40, totalNotes - 1 - 24));
 }
 
 function mapVolume(min, max, value) {

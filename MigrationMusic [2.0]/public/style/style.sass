@@ -1,6 +1,6 @@
 $color-background: #090C19
 $color-text: #F1F1F1
-$color-text-dark: #D6D6D6
+$color-text-dark: #A5A5A5
 
 $color-men: #ED7D31
 $color-women: #68C554
@@ -29,13 +29,24 @@ h1
   z-index: 1
 
 .detail-text-left
-  width: 260px
+  width: 280px
 
 #controls
   margin-top: 50px
 
 #controls > a
-  margin-left: 40px;
+  margin-left: 40px
+
+#events
+    position: absolute
+    top: 100px
+    left: 580px
+    width: 600px
+    height: 200px
+    font-family: Courier New
+    font-size: 12pt
+    color: $color-text-dark
+    z-index: 1
 
 #graph
   position: absolute
@@ -49,6 +60,9 @@ h1
   left: 220px
   width: 540px
   height: 668px
+
+.cover
+  fill: $color-background
 
 .axis
   font: 12px Spectral
@@ -64,6 +78,21 @@ h1
 
 .focus > .chart-body > .line
   stroke-dasharray: 8
+
+.focus > text
+  font-size: 20pt
+
+.focus > text#men
+  fill: $color-men
+
+.focus > text#women
+  fill: $color-women
+
+.focus > text#children
+  fill: $color-children
+
+.focus > text#elderly
+  fill: $color-elderly
 
 #men.line
   fill: none
@@ -153,6 +182,8 @@ rect.selection
   cursor: pointer
 
 #legenda > svg > g > text
+  font-family: 'Spectral'
+  font-size: 16
   fill: $color-text
 
 .disabled

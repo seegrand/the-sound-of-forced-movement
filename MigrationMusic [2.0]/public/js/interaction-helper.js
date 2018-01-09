@@ -35,6 +35,7 @@ function switchShowMen() {
         pathMen.classed("hide", true);
         circleMenRefugees.classed("hide", true);
         circleMenDepandants.classed("hide", true);
+        textMen.classed("hide", true);
     } else {
         showMen = true;
         legendaMen.classList.remove("disabled");
@@ -42,6 +43,7 @@ function switchShowMen() {
         pathMen.classed("hide", false);
         circleMenRefugees.classed("hide", false);
         circleMenDepandants.classed("hide", false);
+        textMen.classed("hide", false);
     }
 
     updateMinimap();
@@ -55,6 +57,7 @@ function switchShowWomen() {
         pathWomen.classed("hide", true);
         circleWomenRefugees.classed("hide", true);
         circleWomenDepandants.classed("hide", true);
+        textWomen.classed("hide", true);
     } else {
         showWomen = true;
         legendaWomen.classList.remove("disabled");
@@ -62,6 +65,7 @@ function switchShowWomen() {
         pathWomen.classed("hide", false);
         circleWomenRefugees.classed("hide", false);
         circleWomenDepandants.classed("hide", false);
+        textWomen.classed("hide", false);
     }
 
     updateMinimap();
@@ -75,6 +79,7 @@ function switchShowChildren() {
         pathChildren.classed("hide", true);
         circleChildrenRefugees.classed("hide", true);
         circleChildrenDepandants.classed("hide", true);
+        textChildren.classed("hide", true);
     } else {
         showChildren = true;
         legendaChildren.classList.remove("disabled");
@@ -82,6 +87,7 @@ function switchShowChildren() {
         pathChildren.classed("hide", false);
         circleChildrenRefugees.classed("hide", false);
         circleChildrenDepandants.classed("hide", false);
+        textChildren.classed("hide", false);
     }
 
     updateMinimap();
@@ -95,6 +101,7 @@ function switchShowElderly() {
         pathElderly.classed("hide", true);
         circleElderlyRefugees.classed("hide", true);
         circleElderlyDepandants.classed("hide", true);
+        textElderly.classed("hide", true);
     } else {
         showElderly = true;
         legendaElderly.classList.remove("disabled");
@@ -102,6 +109,7 @@ function switchShowElderly() {
         pathElderly.classed("hide", false);
         circleElderlyRefugees.classed("hide", false);
         circleElderlyDepandants.classed("hide", false);
+        textElderly.classed("hide", false);
     }
 
     updateMinimap();

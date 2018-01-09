@@ -5,7 +5,7 @@ body {
   color: #F1F1F1; }
 
 a {
-  color: #D6D6D6; }
+  color: #A5A5A5; }
 
 h1 {
   font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif !important;
@@ -20,13 +20,24 @@ h1 {
   z-index: 1; }
 
 .detail-text-left {
-  width: 260px; }
+  width: 280px; }
 
 #controls {
   margin-top: 50px; }
 
 #controls > a {
   margin-left: 40px; }
+
+#events {
+  position: absolute;
+  top: 100px;
+  left: 580px;
+  width: 600px;
+  height: 200px;
+  font-family: Courier New;
+  font-size: 12pt;
+  color: #A5A5A5;
+  z-index: 1; }
 
 #graph {
   position: absolute;
@@ -40,6 +51,9 @@ h1 {
   left: 220px;
   width: 540px;
   height: 668px; }
+
+.cover {
+  fill: #090C19; }
 
 .axis {
   font: 12px Spectral; }
@@ -55,6 +69,21 @@ h1 {
 
 .focus > .chart-body > .line {
   stroke-dasharray: 8; }
+
+.focus > text {
+  font-size: 20pt; }
+
+.focus > text#men {
+  fill: #ED7D31; }
+
+.focus > text#women {
+  fill: #68C554; }
+
+.focus > text#children {
+  fill: #DD2754; }
+
+.focus > text#elderly {
+  fill: #FFC000; }
 
 #men.line {
   fill: none;
@@ -144,6 +173,8 @@ rect.selection {
   cursor: pointer; }
 
 #legenda > svg > g > text {
+  font-family: 'Spectral';
+  font-size: 16;
   fill: #F1F1F1; }
 
 .disabled {

@@ -59,6 +59,11 @@ var circleChildrenDepandants;
 var circleElderlyRefugees;
 var circleElderlyDepandants;
 
+var textMen;
+var textWomen;
+var textChildren;
+var textElderly;
+
 var menValueLine;
 var womenValueLine;
 var childrenValueLine;
@@ -150,7 +155,7 @@ function start(refugees) {
         .attr("id", "clip")
         .append("svg:rect")
         .attr("id", "clip-rect")
-        .attr("width", width - graphAreaMargin)
+        .attr("width", width)
         .attr("height", height);
 
     focus = svg.append("g")
@@ -195,6 +200,13 @@ function start(refugees) {
     focus.append("g")
         .attr("class", "chart-body")
         .attr("clip-path", "url(#clip)");
+
+    focus.append("rect")
+        .attr("class", "cover")
+        .attr("x", width - graphAreaMargin)
+        .attr("y", 0)
+        .attr("width", graphAreaMargin)
+        .attr("height", height);
 
     // Add the menValueLine path.
     pathMen = focus.select("g.chart-body")
@@ -288,6 +300,18 @@ function start(refugees) {
         .attr("class", "refugees")
         .attr("r", "10");
 
+    textMen = focus.append("text")
+        .attr("id", "men");
+
+    textWomen = focus.append("text")
+        .attr("id", "women");
+
+    textChildren = focus.append("text")
+        .attr("id", "children");
+
+    textElderly = focus.append("text")
+        .attr("id", "elderly");
+
     minimap.append("g")
         .attr("class", "axis axis--white axis--x")
         .attr("transform", "translate(0," + heightMinimap + ")")
@@ -344,7 +368,12 @@ var playedNotes = {
 };
 
 function update() {
+    // SHOW EVENT
+    showEvent();
+
     var xPos = width - 14 - graphAreaMargin;
+    var textLeftMargin = 50;
+    var textTopMargin = 10;
 
     if (!paused) {
         if (brushX + 32 < width) {
@@ -366,9 +395,14 @@ function update() {
     var noteLength = 100;
 
     var menDelay = 0;
-    var womenDelay = 0.1;
-    var childrenDelay = 0.2;
-    var elderlyDelay = 0.3;
+    var womenDelay = 0.5;
+    var childrenDelay = 1;
+    var elderlyDelay = 1.5;
+
+    var menValue = Math.round(circleMenPoint.y.map(height, 0, 0, y.domain()[1]));
+    var womenValue = Math.round(circleWomenPoint.y.map(height, 0, 0, y.domain()[1]));
+    var childrenValue = Math.round(circleChildrenPoint.y.map(height, 0, 0, y.domain()[1]));
+    var elderlyValue = Math.round(circleElderlyPoint.y.map(height, 0, 0, y.domain()[1]));
 
     switch (currentDate) {
         case 1:
@@ -451,6 +485,22 @@ function update() {
 
     circleElderlyDepandants.attr("cx", xPos)
         .attr("cy", circleElderlyPoint.y);
+
+    textMen.attr("x", (xPos + textLeftMargin))
+        .attr("y", (circleMenPoint.y) + textTopMargin)
+        .text(menValue);
+
+    textWomen.attr("x", (xPos + textLeftMargin))
+        .attr("y", (circleWomenPoint.y) + textTopMargin)
+        .text(womenValue);
+
+    textChildren.attr("x", (xPos + textLeftMargin))
+        .attr("y", (circleChildrenPoint.y) + textTopMargin)
+        .text(childrenValue);
+
+    textElderly.attr("x", (xPos + textLeftMargin))
+        .attr("y", (circleElderlyPoint.y) + textTopMargin)
+        .text(elderlyValue);
 
     window.requestAnimationFrame(update);
 }
