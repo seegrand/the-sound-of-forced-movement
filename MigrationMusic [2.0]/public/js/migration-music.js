@@ -368,9 +368,6 @@ var playedNotes = {
 };
 
 function update() {
-    // SHOW EVENT
-    showEvent();
-
     var xPos = width - 14 - graphAreaMargin;
     var textLeftMargin = 50;
     var textTopMargin = 10;
@@ -501,6 +498,20 @@ function update() {
     textElderly.attr("x", (xPos + textLeftMargin))
         .attr("y", (circleElderlyPoint.y) + textTopMargin)
         .text(elderlyValue);
+
+    var bisectDate = d3.bisector(function (d) {
+        return d.period;
+    }).left;
+
+    var x0 = x.invert(xPos),
+        i = bisectDate(data, x0, 1);
+
+    // ====================== EVENTS ======================
+    if (i - 1 != currentEventIndex && data[i - 1].events != "") {
+        changeEventText(i - 1, data[i - 1].events);
+    }
+    console.log(text, currentEventIndex, i);
+    typeEventText();
 
     window.requestAnimationFrame(update);
 }
