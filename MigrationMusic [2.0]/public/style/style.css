@@ -15,40 +15,66 @@ h1 {
   font-weight: 500;
   line-height: 26.4px; }
 
+#country {
+  white-space: nowrap; }
+
 #dashboard {
+  width: 290px;
   position: absolute;
   z-index: 1; }
 
 .detail-text-left {
-  width: 280px; }
+  width: 325px;
+  margin-top: 45px; }
 
 #controls {
-  margin-top: 50px; }
-
-#controls > a {
-  margin-left: 40px; }
+  margin-top: 15px;
+  margin-left: 1px; }
+  #controls div {
+    display: block;
+    margin-bottom: 10px; }
+    #controls div span.icon {
+      cursor: pointer; }
+      #controls div span.icon i.material-icons {
+        display: inline-block;
+        border-radius: 50%;
+        border: solid 3px;
+        padding: 3px;
+        font-size: 18px; }
+    #controls div span.label {
+      position: absolute;
+      margin-top: 3px;
+      margin-left: 9px; }
 
 #events {
   position: absolute;
-  top: 100px;
+  top: 149px;
   left: 580px;
   width: 700px;
   height: 200px;
   font-family: Courier New;
   font-size: 16pt;
-  color: #A5A5A5;
+  font-weight: 500;
+  color: #F1F1F1;
   z-index: 1; }
+
+hr.text-divider {
+  border-top: 0.5px solid #F1F1F1;
+  width: 200px;
+  float: left;
+  margin-bottom: 15px;
+  margin-top: 0px; }
 
 #graph {
   position: absolute;
-  top: 70px;
-  left: 220px; }
+  top: 120px;
+  left: 320px; }
 
 #graph-overlay {
   background: linear-gradient(to left, rgba(255, 255, 255, 0), #090C19);
   position: absolute;
-  top: 70px;
-  left: 220px;
+  top: 120px;
+  left: 320px;
   width: 540px;
   height: 668px; }
 
@@ -58,16 +84,23 @@ h1 {
 .axis {
   font: 12px Spectral; }
 
+.axis--label {
+  fill: #83838C;
+  font: 18px Spectral !important; }
+
 .axis--white line {
-  stroke: #F1F1F1; }
+  stroke: #42424C; }
 
 .axis--white path {
-  stroke: #F1F1F1; }
+  stroke: #42424C; }
 
 .axis--white text {
   fill: #F1F1F1; }
 
 .focus > .chart-body > .line {
+  stroke-width: 4px; }
+
+.focus > .chart-body > .line.dashed {
   stroke-dasharray: 8; }
 
 .focus > text {
@@ -87,23 +120,19 @@ h1 {
 
 #men.line {
   fill: none;
-  stroke: #ED7D31;
-  stroke-width: 2px; }
+  stroke: #ED7D31; }
 
 #women.line {
   fill: none;
-  stroke: #68C554;
-  stroke-width: 2px; }
+  stroke: #68C554; }
 
 #children.line {
   fill: none;
-  stroke: #DD2754;
-  stroke-width: 2px; }
+  stroke: #DD2754; }
 
 #elderly.line {
   fill: none;
-  stroke: #FFC000;
-  stroke-width: 2px; }
+  stroke: #FFC000; }
 
 #men.refugees {
   fill: #ED7D31;
@@ -169,6 +198,9 @@ rect.selection {
   y: 20;
   height: 70px; }
 
+#legenda {
+  width: 260px; }
+
 #legenda > svg > g {
   cursor: pointer; }
 
@@ -176,6 +208,19 @@ rect.selection {
   font-family: 'Spectral';
   font-size: 16;
   fill: #F1F1F1; }
+
+#legenda > svg > g#depandants > circle.depandants {
+  stroke-dasharray: 6 10;
+  stroke-width: 10px; }
+
+#creators {
+  text-align: center;
+  font-size: 10px;
+  color: #43434C;
+  padding: 30px;
+  position: fixed;
+  bottom: 0;
+  right: 0; }
 
 .disabled {
   display: block;
@@ -190,5 +235,65 @@ rect.selection {
 
 .hide {
   display: none; }
+
+.preloader-1 {
+  zoom: 4.5;
+  width: 61px;
+  height: 45px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto; }
+
+.preloader-1 > div {
+  color: #fff;
+  margin: 5px 0;
+  text-transform: uppercase;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px; }
+
+.preloader-1 .line {
+  width: 1px;
+  height: 12px;
+  background: #fff;
+  margin: 0 1px;
+  display: inline-block;
+  animation: opacity-1 1000ms infinite ease-in-out; }
+
+.preloader-1 .line-1, .preloader-2 .line-1 {
+  animation-delay: 800ms; }
+
+.preloader-1 .line-2, .preloader-2 .line-2 {
+  animation-delay: 600ms; }
+
+.preloader-1 .line-3, .preloader-2 .line-3 {
+  animation-delay: 400ms; }
+
+.preloader-1 .line-4, .preloader-2 .line-4 {
+  animation-delay: 200ms; }
+
+.preloader-1 .line-6, .preloader-2 .line-6 {
+  animation-delay: 200ms; }
+
+.preloader-1 .line-7, .preloader-2 .line-7 {
+  animation-delay: 400ms; }
+
+.preloader-1 .line-8, .preloader-2 .line-8 {
+  animation-delay: 600ms; }
+
+.preloader-1 .line-9, .preloader-2 .line-9 {
+  animation-delay: 800ms; }
+
+@keyframes opacity-1 {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
 
 /*# sourceMappingURL=style.css.map */

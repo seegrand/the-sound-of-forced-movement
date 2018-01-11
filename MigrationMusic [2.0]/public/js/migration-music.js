@@ -1,6 +1,6 @@
 var data;
 
-var svgWidth = 1600;
+var svgWidth = 1500;
 var svgHeight = 800;
 var svgMinimapHeight = 120;
 
@@ -69,6 +69,11 @@ var womenValueLine;
 var childrenValueLine;
 var elderlyValueLine;
 
+var pathMenMinimap;
+var pathWomenMinimap;
+var pathChildrenMinimap;
+var pathElderlyMinimap;
+
 var menValueLineMinimap;
 var womenValueLineMinimap;
 var childrenValueLineMinimap;
@@ -85,7 +90,7 @@ function start(refugees) {
     // Set the dimensions and margins of the graph
     margin = {
         top: 20,
-        right: 40,
+        right: 60,
         bottom: svgMinimapHeight + 40,
         left: 20
     };
@@ -208,6 +213,15 @@ function start(refugees) {
         .attr("width", graphAreaMargin)
         .attr("height", height);
 
+    focus.append("text")
+        .attr("class", "axis axis--label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", (width - 25))
+        .attr("x", 0 - 175)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Monthly asylum request in the Netherlands");
+
     // Add the menValueLine path.
     pathMen = focus.select("g.chart-body")
         .append("path")
@@ -317,25 +331,25 @@ function start(refugees) {
         .attr("transform", "translate(0," + heightMinimap + ")")
         .call(xAxisMinimap);
 
-    minimap.append("path")
+    pathMenMinimap = minimap.append("path")
         .datum(data)
         .attr("id", "men")
         .attr("class", "line")
         .attr("d", menValueLineMinimap);
 
-    minimap.append("path")
+    pathWomenMinimap = minimap.append("path")
         .datum(data)
         .attr("id", "women")
         .attr("class", "line")
         .attr("d", womenValueLineMinimap);
 
-    minimap.append("path")
+    pathChildrenMinimap = minimap.append("path")
         .datum(data)
         .attr("id", "children")
         .attr("class", "line")
         .attr("d", childrenValueLineMinimap);
 
-    minimap.append("path")
+    pathElderlyMinimap = minimap.append("path")
         .datum(data)
         .attr("id", "elderly")
         .attr("class", "line")
@@ -364,7 +378,9 @@ var playedNotes = {
     "second": false,
     "third": false,
     "fourth": false,
-    "fifth": false
+    "fifth": false,
+    "sixth": false,
+    "seventh": false
 };
 
 function update() {
@@ -374,7 +390,7 @@ function update() {
 
     if (!paused) {
         if (brushX + 32 < width) {
-            brushX = brushX + 0.4;
+            brushX = brushX + 0.1;
 
             minimap.select("g.brush")
                 .call(brush.move, [brushX, brushX + 32]);
@@ -389,72 +405,101 @@ function update() {
     var currentDate = x.invert(xPos).getDate();
 
     var maxHeight = height - 200;
-    var noteLength = 100;
+    var noteLength = 1000;
 
     var menDelay = 0;
-    var womenDelay = 0.5;
-    var childrenDelay = 1;
-    var elderlyDelay = 1.5;
+    var womenDelay = 0;
+    var childrenDelay = 0;
+    var elderlyDelay = 0;
 
     var menValue = Math.round(circleMenPoint.y.map(height, 0, 0, y.domain()[1]));
     var womenValue = Math.round(circleWomenPoint.y.map(height, 0, 0, y.domain()[1]));
     var childrenValue = Math.round(circleChildrenPoint.y.map(height, 0, 0, y.domain()[1]));
     var elderlyValue = Math.round(circleElderlyPoint.y.map(height, 0, 0, y.domain()[1]));
 
+    var bisectDate = d3.bisector(function (d) {
+        return d.period;
+    }).left;
+
+    var x0 = x.invert(xPos),
+        index = bisectDate(data, x0, 1);
+
     switch (currentDate) {
         case 1:
             if (!playedNotes.first) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.first = true;
-                playedNotes.fifth = false;
+                playedNotes.seventh = false;
             }
             break;
-        case 8:
+        case 4:
             if (!playedNotes.second) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.second = true;
                 playedNotes.first = false;
             }
             break;
-        case 15:
+        case 8:
             if (!playedNotes.third) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.third = true;
                 playedNotes.second = false;
             }
             break;
-        case 22:
+        case 12:
             if (!playedNotes.fourth) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.fourth = true;
                 playedNotes.third = false;
             }
             break;
-        case 29:
+        case 18:
             if (!playedNotes.fifth) {
-                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
-                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
-                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
-                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
 
                 playedNotes.fifth = true;
                 playedNotes.fourth = false;
+            }
+            break;
+        case 22:
+            if (!playedNotes.sixth) {
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
+
+                playedNotes.sixth = true;
+                playedNotes.fifth = false;
+            }
+            break;
+        case 28:
+            if (!playedNotes.seventh) {
+                playNote(channels.men, mapNote(maxHeight, 0, circleMenPoint.y, index), mapVolume(maxHeight, 0, circleMenPoint.y), menDelay, noteLength);
+                playNote(channels.women, mapNote(maxHeight, 0, circleWomenPoint.y, index), mapVolume(maxHeight, 0, circleWomenPoint.y), womenDelay, noteLength);
+                playNote(channels.children, mapNote(maxHeight, 0, circleChildrenPoint.y, index), mapVolume(maxHeight, 0, circleChildrenPoint.y), childrenDelay, noteLength);
+                playNote(channels.elderly, mapNote(maxHeight, 0, circleElderlyPoint.y, index), mapVolume(maxHeight, 0, circleElderlyPoint.y), elderlyDelay, noteLength);
+
+                playedNotes.seventh = true;
+                playedNotes.sixth = false;
             }
             break;
     }
@@ -499,29 +544,29 @@ function update() {
         .attr("y", (circleElderlyPoint.y) + textTopMargin)
         .text(elderlyValue);
 
-    var bisectDate = d3.bisector(function (d) {
-        return d.period;
-    }).left;
-
-    var x0 = x.invert(xPos),
-        i = bisectDate(data, x0, 1);
-
     // ====================== EVENTS ======================
-    if (i - 1 != currentEventIndex && data[i - 1].events != "") {
-        changeEventText(i - 1, data[i - 1].events);
+    if (index - 1 != currentEventIndex && data[index - 1].events != "") {
+        changeEventText(index - 1, data[index - 1].events);
     }
-    console.log(text, currentEventIndex, i);
-    typeEventText();
+
+    typeTextEvent();
 
     window.requestAnimationFrame(update);
 }
 
 function updateMinimap() {
-    yMinimap.domain(y.domain());
+    yMinimap.domain([0, d3.max(data, function (d) {
+        return calculateDomainY(d, false);
+    })]);
 
     var transitionEaseLinear = d3.transition()
         .duration(transformTransitionDuration)
         .ease(transformTransition);
+
+    pathMenMinimap.transition(transitionEaseLinear).attr("d", menValueLineMinimap);
+    pathWomenMinimap.transition(transitionEaseLinear).attr("d", womenValueLineMinimap);
+    pathChildrenMinimap.transition(transitionEaseLinear).attr("d", childrenValueLineMinimap);
+    pathElderlyMinimap.transition(transitionEaseLinear).attr("d", elderlyValueLineMinimap);
 }
 
 function brushed() {
@@ -619,7 +664,7 @@ function findYatX(x, path) {
     return pos;
 }
 
-function calculateDomainY(d) {
+function calculateDomainY(d, filter = true) {
     var domainTotal = [];
     domainTotal[0] = d.menTotal;
     domainTotal[1] = d.womenTotal;
@@ -638,28 +683,30 @@ function calculateDomainY(d) {
     domainDepandants[2] = d.childrenDepandants;
     domainDepandants[3] = d.elderlyDepandants;
 
-    if (!showMen) {
-        remove(domainTotal, d.menTotal);
-        remove(domainRefugees, d.menRefugees);
-        remove(domainDepandants, d.menDepandants);
-    }
+    if (filter) {
+        if (!showMen) {
+            remove(domainTotal, d.menTotal);
+            remove(domainRefugees, d.menRefugees);
+            remove(domainDepandants, d.menDepandants);
+        }
 
-    if (!showWomen) {
-        remove(domainTotal, d.womenTotal);
-        remove(domainRefugees, d.womenRefugees);
-        remove(domainDepandants, d.womenDepandants);
-    }
+        if (!showWomen) {
+            remove(domainTotal, d.womenTotal);
+            remove(domainRefugees, d.womenRefugees);
+            remove(domainDepandants, d.womenDepandants);
+        }
 
-    if (!showChildren) {
-        remove(domainTotal, d.childrenTotal);
-        remove(domainRefugees, d.childrenRefugees);
-        remove(domainDepandants, d.childrenDepandants);
-    }
+        if (!showChildren) {
+            remove(domainTotal, d.childrenTotal);
+            remove(domainRefugees, d.childrenRefugees);
+            remove(domainDepandants, d.childrenDepandants);
+        }
 
-    if (!showElderly) {
-        remove(domainTotal, d.elderlyTotal);
-        remove(domainRefugees, d.elderlyRefugees);
-        remove(domainDepandants, d.elderlyDepandants);
+        if (!showElderly) {
+            remove(domainTotal, d.elderlyTotal);
+            remove(domainRefugees, d.elderlyRefugees);
+            remove(domainDepandants, d.elderlyDepandants);
+        }
     }
 
     if (showRefugees && showDepandants) {

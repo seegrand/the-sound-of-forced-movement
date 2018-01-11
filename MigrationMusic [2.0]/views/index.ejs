@@ -36,30 +36,35 @@
 </head>
 
 <body>
+  <div class="preloader-1">
+    <div>Loading</div>
+    <span class="line line-1"></span>
+    <span class="line line-2"></span>
+    <span class="line line-3"></span>
+    <span class="line line-4"></span>
+    <span class="line line-5"></span>
+    <span class="line line-6"></span>
+    <span class="line line-7"></span>
+    <span class="line line-8"></span>
+    <span class="line line-9"></span>
+  </div>
+
   <div id="dashboard">
     <h1 id="country">
-      Loading...
+      The Sound of Forced Movement
     </h1>
 
-    <div id="controls">
-      <a id="play" class="btn-floating btn-large waves-effect waves-light #37474f blue-grey darken-3">
-        <i class="material-icons">pause</i>
-      </a>
-
-      <a id="reload" class="btn-floating btn-large waves-effect waves-light #37474f blue-grey darken-3">
-        <i class="material-icons">refresh</i>
-      </a>
-    </div>
-
-    <p class="detail-text-left">According to the IOM, more than 3,770 migrants were reported to have died trying to cross the Mediterranean in 2015.
-      Most died on the crossing from north Africa to Italy, and more than 800 died in the Aegean crossing from Turkey to
-      Greece. The summer months are usually when most fatalities occur as it is the busiest time for migrants attempting
-      to reach Europe. But in 2015, the deadliest month for migrants was April, which saw a boat carrying about 800 people
-      capsize in the sea off Libya. Overcrowding is thought to have been one of the reasons for the disaster.
+    <p class="detail-text-left">More than 250,000 Syrians have lost their lives in four-and-a-half years of armed conflict, which began with anti-government
+      protests before escalating into a full-scale civil war. More than 11 million others have been forced from their homes
+      as forces loyal to President Bashar al-Assad and those opposed to his rule battle each other - as well as jihadist
+      militants from so-called Islamic State. During this period a lot of Syrians have fled to the Netherlands. The lines
+      show how many asylum request the Netherlands received during this period and the music translates this into sound.
     </p>
 
+    <hr class="text-divider" />
+
     <div id="legenda">
-      <svg width="200" height="400">
+      <svg width="200" height="260">
         <g id="men">
           <circle id="men" class="depandants" r="16" cx="16" cy="20"></circle>
           <circle id="men" class="refugees" r="10" cx="16" cy="20"></circle>
@@ -93,6 +98,7 @@
         </g>
 
         <g id="refugees">
+          <circle id="light" class="depandants" r="16" cx="16" cy="200"></circle>
           <circle id="light" class="refugees" r="10" cx="16" cy="200"></circle>
           <text x="40" y="208">
             Refugees
@@ -100,18 +106,41 @@
         </g>
 
         <g id="depandants">
-          <circle id="light" class="depandants" r="16" cx="16" cy="240"></circle>
-          <circle id="dark" class="refugees" r="10" cx="16" cy="240"></circle>
+          <circle id="light" class="depandants" r="15" cx="16" cy="240"></circle>
+          <circle id="light" class="refugees" r="10" cx="16" cy="240"></circle>
           <text x="40" y="248">
             Depandants
           </text>
         </g>
       </svg>
     </div>
+
+    <div id="controls">
+      <div id="play">
+        <span class="icon">
+          <i class="material-icons">pause</i>
+        </span>
+        <span class="label">Pause</span>
+      </div>
+
+      <div id="reload">
+        <span class="icon">
+          <i class="material-icons">refresh</i>
+        </span>
+        <span class="label">Reload</span>
+      </div>
+    </div>
   </div>
 
   <div id="events">
-    The Sound of Forced Movement
+
+  </div>
+
+  <div id="creators">
+    Made by:
+    <br/> Maarten van Veldhoven
+    <br/> &#38;
+    <br/> Sander Grandia
   </div>
 
   <div id="graph"></div>

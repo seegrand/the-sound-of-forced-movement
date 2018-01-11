@@ -871,15 +871,16 @@ function initData(callback) {
         parseNumbers: true,
         callback: function (data, tabletop) {
             refugees = data;
+            hideLoading();
             callback();
         }
     });
 
-    // refugees = data;
+    // setCountryName();
+}
 
-    setCountryName();
-
-    // callback();
+function hideLoading() {
+    document.querySelector(".preloader-1").classList.add("hide");
 }
 
 function setCountryName() {

@@ -32,18 +32,18 @@ function switchShowMen() {
         showMen = false;
         legendaMen.classList.add("disabled");
 
-        pathMen.classed("hide", true);
-        circleMenRefugees.classed("hide", true);
-        circleMenDepandants.classed("hide", true);
-        textMen.classed("hide", true);
+        pathMen.classed("disabled", true);
+        circleMenRefugees.classed("disabled", true);
+        circleMenDepandants.classed("disabled", true);
+        textMen.classed("disabled", true);
     } else {
         showMen = true;
         legendaMen.classList.remove("disabled");
 
-        pathMen.classed("hide", false);
-        circleMenRefugees.classed("hide", false);
-        circleMenDepandants.classed("hide", false);
-        textMen.classed("hide", false);
+        pathMen.classed("disabled", false);
+        circleMenRefugees.classed("disabled", false);
+        circleMenDepandants.classed("disabled", false);
+        textMen.classed("disabled", false);
     }
 
     updateMinimap();
@@ -54,18 +54,18 @@ function switchShowWomen() {
         showWomen = false;
         legendaWomen.classList.add("disabled");
 
-        pathWomen.classed("hide", true);
-        circleWomenRefugees.classed("hide", true);
-        circleWomenDepandants.classed("hide", true);
-        textWomen.classed("hide", true);
+        pathWomen.classed("disabled", true);
+        circleWomenRefugees.classed("disabled", true);
+        circleWomenDepandants.classed("disabled", true);
+        textWomen.classed("disabled", true);
     } else {
         showWomen = true;
         legendaWomen.classList.remove("disabled");
 
-        pathWomen.classed("hide", false);
-        circleWomenRefugees.classed("hide", false);
-        circleWomenDepandants.classed("hide", false);
-        textWomen.classed("hide", false);
+        pathWomen.classed("disabled", false);
+        circleWomenRefugees.classed("disabled", false);
+        circleWomenDepandants.classed("disabled", false);
+        textWomen.classed("disabled", false);
     }
 
     updateMinimap();
@@ -76,18 +76,18 @@ function switchShowChildren() {
         showChildren = false;
         legendaChildren.classList.add("disabled");
 
-        pathChildren.classed("hide", true);
-        circleChildrenRefugees.classed("hide", true);
-        circleChildrenDepandants.classed("hide", true);
-        textChildren.classed("hide", true);
+        pathChildren.classed("disabled", true);
+        circleChildrenRefugees.classed("disabled", true);
+        circleChildrenDepandants.classed("disabled", true);
+        textChildren.classed("disabled", true);
     } else {
         showChildren = true;
         legendaChildren.classList.remove("disabled");
 
-        pathChildren.classed("hide", false);
-        circleChildrenRefugees.classed("hide", false);
-        circleChildrenDepandants.classed("hide", false);
-        textChildren.classed("hide", false);
+        pathChildren.classed("disabled", false);
+        circleChildrenRefugees.classed("disabled", false);
+        circleChildrenDepandants.classed("disabled", false);
+        textChildren.classed("disabled", false);
     }
 
     updateMinimap();
@@ -98,18 +98,18 @@ function switchShowElderly() {
         showElderly = false;
         legendaElderly.classList.add("disabled");
 
-        pathElderly.classed("hide", true);
-        circleElderlyRefugees.classed("hide", true);
-        circleElderlyDepandants.classed("hide", true);
-        textElderly.classed("hide", true);
+        pathElderly.classed("disabled", true);
+        circleElderlyRefugees.classed("disabled", true);
+        circleElderlyDepandants.classed("disabled", true);
+        textElderly.classed("disabled", true);
     } else {
         showElderly = true;
         legendaElderly.classList.remove("disabled");
 
-        pathElderly.classed("hide", false);
-        circleElderlyRefugees.classed("hide", false);
-        circleElderlyDepandants.classed("hide", false);
-        textElderly.classed("hide", false);
+        pathElderly.classed("disabled", false);
+        circleElderlyRefugees.classed("disabled", false);
+        circleElderlyDepandants.classed("disabled", false);
+        textElderly.classed("disabled", false);
     }
 
     updateMinimap();
@@ -118,15 +118,12 @@ function switchShowElderly() {
 function switchShowRefugees() {
     if (showRefugees) {
         if (!showDepandants) {
-            showDepandants = true;
-            legendaDepandants.classList.remove("disabled");
+            enableDepandants();
         }
 
-        showRefugees = false;
-        legendaRefugees.classList.add("disabled");
+        disableRefugees();
     } else {
-        showRefugees = true;
-        legendaRefugees.classList.remove("disabled");
+        enableRefugees();
     }
 
     updateMinimap();
@@ -135,16 +132,48 @@ function switchShowRefugees() {
 function switchShowDepandants() {
     if (showDepandants) {
         if (!showRefugees) {
-            showRefugees = true;
-            legendaRefugees.classList.remove("disabled");
+            enableRefugees();
         }
 
-        showDepandants = false;
-        legendaDepandants.classList.add("disabled");
+        disableDepandants();
     } else {
-        showDepandants = true;
-        legendaDepandants.classList.remove("disabled");
+        enableDepandants();
     }
 
     updateMinimap();
+}
+
+function disableRefugees() {
+    showRefugees = false;
+    legendaRefugees.classList.add("disabled");
+    legendaRefugees.querySelector("circle.refugees").setAttribute("id", "dark");
+
+    dashLines(true);
+}
+
+function enableRefugees() {
+    showRefugees = true;
+    legendaRefugees.classList.remove("disabled");
+    legendaRefugees.querySelector("circle.refugees").setAttribute("id", "light");
+
+    dashLines(false);
+}
+
+function disableDepandants() {
+    showDepandants = false;
+    legendaDepandants.classList.add("disabled");
+    legendaDepandants.querySelector("circle.refugees").setAttribute("id", "dark");
+}
+
+function enableDepandants() {
+    showDepandants = true;
+    legendaDepandants.classList.remove("disabled");
+    legendaDepandants.querySelector("circle.refugees").setAttribute("id", "light");
+}
+
+function dashLines(shouldDashLines) {
+    pathMen.classed("dashed", shouldDashLines);
+    pathWomen.classed("dashed", shouldDashLines);
+    pathChildren.classed("dashed", shouldDashLines);
+    pathElderly.classed("dashed", shouldDashLines);
 }
