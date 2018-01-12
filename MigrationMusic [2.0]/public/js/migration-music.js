@@ -383,6 +383,9 @@ var playedNotes = {
     "seventh": false
 };
 
+var pauseBeforeReload = 360;
+var skippedFrames = 0;
+
 function update() {
     var xPos = width - 14 - graphAreaMargin;
     var textLeftMargin = 50;
@@ -390,10 +393,16 @@ function update() {
 
     if (!paused) {
         if (brushX + 32 < width) {
-            brushX = brushX + 0.1;
+            brushX = brushX + 0.3;
 
             minimap.select("g.brush")
                 .call(brush.move, [brushX, brushX + 32]);
+        } else {
+            if (skippedFrames < pauseBeforeReload) {
+                skippedFrames++;
+            } else {
+                reloadButtonEvent();
+            }
         }
     }
 
