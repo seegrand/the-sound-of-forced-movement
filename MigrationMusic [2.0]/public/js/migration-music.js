@@ -401,6 +401,7 @@ function update() {
             if (skippedFrames < pauseBeforeReload) {
                 skippedFrames++;
             } else {
+                pause();
                 reloadButtonEvent();
             }
         }
@@ -679,18 +680,21 @@ function calculateDomainY(d, filter = true) {
     domainTotal[1] = d.womenTotal;
     domainTotal[2] = d.childrenTotal;
     domainTotal[3] = d.elderlyTotal;
+    domainTotal[4] = 0;
 
     var domainRefugees = [];
     domainRefugees[0] = d.menRefugees;
     domainRefugees[1] = d.womenRefugees;
     domainRefugees[2] = d.childrenRefugees;
     domainRefugees[3] = d.elderlyRefugees;
+    domainRefugees[4] = 0;
 
     var domainDepandants = [];
     domainDepandants[0] = d.menDepandants;
     domainDepandants[1] = d.womenDepandants;
     domainDepandants[2] = d.childrenDepandants;
     domainDepandants[3] = d.elderlyDepandants;
+    domainDepandants[4] = 0;
 
     if (filter) {
         if (!showMen) {
