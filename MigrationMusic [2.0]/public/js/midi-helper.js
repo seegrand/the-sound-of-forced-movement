@@ -171,8 +171,6 @@
                 selectedScale = index % (scales.length - 1);
             }
         }
-
-        console.log(index, selectedScale);
     }
 
     function mapToScale(num, arr) {

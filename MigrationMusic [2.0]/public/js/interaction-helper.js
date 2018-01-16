@@ -6,6 +6,9 @@ var legendaElderly;
 var legendaRefugees;
 var legendaDepandants;
 
+var creators;
+var easterEggThreshold = 0;
+
 function initInteraction() {
     legendaMen = document.querySelector("#legenda > svg > g#men");
     legendaMen.addEventListener("click", switchShowMen);
@@ -25,6 +28,8 @@ function initInteraction() {
     legendaDepandants = document.querySelector("#legenda > svg > g#depandants");
     legendaDepandants.addEventListener("click", switchShowDepandants);
 
+    creators = document.querySelector('#creators');
+    creators.addEventListener("click", easterEgg);
 }
 
 function switchShowMen() {
@@ -176,4 +181,13 @@ function dashLines(shouldDashLines) {
     pathWomen.classed("dashed", shouldDashLines);
     pathChildren.classed("dashed", shouldDashLines);
     pathElderly.classed("dashed", shouldDashLines);
+}
+
+function easterEgg() {
+    easterEggThreshold++;
+
+    if (easterEggThreshold == 3) {
+        var audioFile = document.querySelector("audio#dikke-bmw");
+        audioFile.play();
+    }
 }
