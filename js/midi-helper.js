@@ -1,3 +1,5 @@
+var soundfontUrl = 'https://cdn.rawgit.com/seegrand/the-sound-of-forced-movement/gh-pages/soundfont/FluidR3_GM/';
+
 var instrumentNames = [
     "acoustic_bass",
     "choir_aahs",
@@ -83,13 +85,8 @@ var maxVolume = 127;
 function initMidi(callback) {
     console.log("Initializing MIDI.js...");
 
-    // Adding map function to Javascript
-    Number.prototype.map = function (in_min, in_max, out_min, out_max) {
-        return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
-
     MIDI.loadPlugin({
-        soundfontUrl: "../soundfont/FluidR3_GM/",
+        soundfontUrl: soundfontUrl,
         instrument: instrumentNames,
         onprogress: function (state, progress) {
             console.log(state, progress);
