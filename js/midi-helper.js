@@ -1,4 +1,4 @@
-var soundfontUrl = 'https://cdn.rawgit.com/seegrand/the-sound-of-forced-movement/gh-pages/soundfont/FluidR3_GM/';
+var soundfontUrl = 'https://cdn.jsdelivr.net/gh/seegrand/the-sound-of-forced-movement@gh-pages/soundfont/FluidR3_GM/';
 
 var instrumentNames = [
     "acoustic_bass",
